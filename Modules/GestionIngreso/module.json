@@ -1,0 +1,11 @@
+{
+    "name": "GestionIngreso",
+    "alias": "gestioningreso",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\GestionIngreso\\Providers\\GestionIngresoServiceProvider"
+    ],
+    "files": []
+}

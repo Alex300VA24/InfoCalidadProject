@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/gestioncurricular",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\GestionCurricular\\": "app/",
+            "Modules\\GestionCurricular\\Database\\Factories\\": "database/factories/",
+            "Modules\\GestionCurricular\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\GestionCurricular\\Tests\\": "tests/"
+        }
+    }
+}

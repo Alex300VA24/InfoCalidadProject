@@ -1,0 +1,11 @@
+{
+    "name": "EnsenanzaAprendizaje",
+    "alias": "ensenanzaaprendizaje",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\EnsenanzaAprendizaje\\Providers\\EnsenanzaAprendizajeServiceProvider"
+    ],
+    "files": []
+}

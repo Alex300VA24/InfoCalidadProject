@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/resultadosformacion",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ResultadosFormacion\\": "app/",
+            "Modules\\ResultadosFormacion\\Database\\Factories\\": "database/factories/",
+            "Modules\\ResultadosFormacion\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ResultadosFormacion\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "name": "GestionCurricular",
+    "alias": "gestioncurricular",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\GestionCurricular\\Providers\\GestionCurricularServiceProvider"
+    ],
+    "files": []
+}

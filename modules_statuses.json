@@ -1,0 +1,7 @@
+{
+    "Core": true,
+    "GestionCurricular": true,
+    "GestionIngreso": true,
+    "EnsenanzaAprendizaje": true,
+    "ResultadosFormacion": true
+}

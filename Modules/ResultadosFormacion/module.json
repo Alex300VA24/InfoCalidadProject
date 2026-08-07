@@ -1,0 +1,11 @@
+{
+    "name": "ResultadosFormacion",
+    "alias": "resultadosformacion",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ResultadosFormacion\\Providers\\ResultadosFormacionServiceProvider"
+    ],
+    "files": []
+}

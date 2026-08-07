@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/gestioningreso",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\GestionIngreso\\": "app/",
+            "Modules\\GestionIngreso\\Database\\Factories\\": "database/factories/",
+            "Modules\\GestionIngreso\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\GestionIngreso\\Tests\\": "tests/"
+        }
+    }
+}
