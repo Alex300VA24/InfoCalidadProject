@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class TechnicalReport extends Model
 {
+    protected $table = 'app_gestion_curricular.technical_reports';
+
     use HasFactory;
 
     protected $fillable = ['curriculum_review_id', 'preparer_id', 'content', 'status'];

@@ -45,9 +45,9 @@
                         <dd class="font-semibold">{{ $classSession->hours }}</dd>
                     </div>
                     @if($classSession->notes)
-                        <div class="flex justify-between px-6 py-3">
+                        <div class="flex flex-wrap gap-x-4 gap-y-1 px-6 py-3">
                             <dt class="text-slate-500">Observaciones</dt>
-                            <dd class="font-semibold max-w-md text-right">{{ $classSession->notes }}</dd>
+                            <dd class="font-semibold max-w-full sm:max-w-md text-left sm:text-right min-w-0">{{ $classSession->notes }}</dd>
                         </div>
                     @endif
                 </dl>

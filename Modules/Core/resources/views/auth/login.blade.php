@@ -21,8 +21,8 @@
         </a>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <script data-turbo-eval="true">
+        window.__onReady(() => {
             const passwordInput = document.getElementById('password');
             const toggleButton = document.getElementById('toggle-password');
             const passwordIcon = document.getElementById('password-icon');

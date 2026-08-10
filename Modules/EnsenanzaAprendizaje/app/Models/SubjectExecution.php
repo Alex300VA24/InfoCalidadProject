@@ -19,7 +19,7 @@ class SubjectExecution extends Model
         'cerrado' => 'Cerrado',
     ];
 
-    protected $table = 'subject_executions';
+    protected $table = 'app_ensenanza_aprendizaje.subject_executions';
 
     protected $fillable = [
         'subject_id', 'teacher_id', 'academic_period_id', 'syllabus_id',

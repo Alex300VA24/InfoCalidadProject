@@ -9,6 +9,8 @@ use Modules\Core\Models\Subject;
 
 class EnrollmentSubject extends Model
 {
+    protected $table = 'app_gestion_ingreso.enrollment_subjects';
+
     use HasFactory;
 
     protected $fillable = ['enrollment_id', 'subject_id', 'status'];

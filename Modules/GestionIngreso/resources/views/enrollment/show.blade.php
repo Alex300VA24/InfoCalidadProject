@@ -7,10 +7,10 @@
                 <p class="text-slate-500">{{ $enrollment->student?->fullName() }} · {{ $enrollment->academicPeriod?->name }}</p>
             </div>
             <div class="flex gap-3">
-                <a href="{{ route('enrollment.ficha', $enrollment) }}" class="px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
+                <a data-turbo="false" href="{{ route('enrollment.ficha', $enrollment) }}" class="px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">download</span> Ficha de Matrícula
                 </a>
-                <a href="{{ route('enrollment.orden-pago', $enrollment) }}" class="px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
+                <a data-turbo="false" href="{{ route('enrollment.orden-pago', $enrollment) }}" class="px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">receipt_long</span> Orden de Pago
                 </a>
             </div>
@@ -91,7 +91,7 @@
                                                 {{ ucfirst($payment->status) }}
                                             </span>
                                             @if($payment->pdf_path)
-                                                <a href="{{ route('enrollment.orden-pago', $enrollment) }}" class="p-1.5 hover:bg-slate-100 rounded text-navy">
+                                                <a data-turbo="false" href="{{ route('enrollment.orden-pago', $enrollment) }}" class="p-1.5 hover:bg-slate-100 rounded text-navy">
                                                     <span class="material-symbols-outlined text-lg">download</span>
                                                 </a>
                                             @endif

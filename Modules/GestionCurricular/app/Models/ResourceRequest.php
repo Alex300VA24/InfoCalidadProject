@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ResourceRequest extends Model
 {
+    protected $table = 'app_gestion_curricular.resource_requests';
+
     use HasFactory;
 
     protected $fillable = [

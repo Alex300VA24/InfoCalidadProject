@@ -10,7 +10,7 @@ class GraduateSurvey extends Model
 {
     use HasFactory;
 
-    protected $table = 'graduate_surveys';
+    protected $table = 'app_resultados_formacion.graduate_surveys';
 
     protected $fillable = [
         'graduate_id', 'period', 'survey_date', 'employed',

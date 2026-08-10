@@ -19,7 +19,7 @@ class TeachingLoad extends Model
         'reemplazo' => 'Reemplazo',
     ];
 
-    protected $table = 'teaching_loads';
+    protected $table = 'app_ensenanza_aprendizaje.teaching_loads';
 
     protected $fillable = [
         'teacher_id', 'subject_id', 'academic_period_id', 'section', 'hours', 'status',

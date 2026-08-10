@@ -10,6 +10,8 @@ use Modules\Core\Models\Student;
 
 class MobilityApplication extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.mobility_applications';
+
     use HasFactory;
 
     public const TYPES = [

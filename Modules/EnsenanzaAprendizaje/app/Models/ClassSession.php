@@ -11,6 +11,8 @@ use Modules\Core\Models\User;
 
 class ClassSession extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.class_sessions';
+
     use HasFactory;
 
     public const STATUSES = [

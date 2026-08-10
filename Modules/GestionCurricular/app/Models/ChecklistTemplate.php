@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ChecklistTemplate extends Model
 {
+    protected $table = 'app_gestion_curricular.checklist_templates';
+
     use HasFactory;
 
     protected $fillable = ['code', 'name', 'version', 'description', 'is_active'];

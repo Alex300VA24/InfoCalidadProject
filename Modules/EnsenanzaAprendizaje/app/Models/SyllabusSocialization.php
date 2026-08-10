@@ -12,7 +12,7 @@ class SyllabusSocialization extends Model
 {
     use HasFactory;
 
-    protected $table = 'syllabus_socializations';
+    protected $table = 'app_ensenanza_aprendizaje.syllabus_socializations';
 
     protected $fillable = [
         'syllabus_id', 'date', 'evidence_path', 'notes', 'registered_by',

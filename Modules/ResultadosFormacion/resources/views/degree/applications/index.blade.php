@@ -1,13 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-end">
+        <div class="flex flex-wrap justify-between items-end gap-3">
             <div>
                 <span class="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">Resultados de la Formación</span>
                 <h2 class="text-3xl font-bold text-navy mt-2">Grados y Títulos</h2>
                 <p class="text-slate-500">Expedientes de grado de bachiller y título profesional.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="{{ route('degree.applications.create') }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">+ Nuevo Expediente</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('degree.applications.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <span class="material-symbols-outlined text-lg">note_add</span>
+                    Nuevo Expediente
+                </a>
             </div>
         </div>
     </x-slot>
@@ -18,7 +21,7 @@
                 <div class="p-4">
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <select name="type" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="type" onchange="this.form.submit()" aria-label="Filtrar por tipo" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los tipos</option>
                                 @foreach($types as $key => $label)
                                     <option value="{{ $key }}" {{ request('type') === $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -26,15 +29,21 @@
                             </select>
                         </div>
                         <div>
-                            <select name="status" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="status" onchange="this.form.submit()" aria-label="Filtrar por estado" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los estados</option>
                                 @foreach($statuses as $key => $label)
                                     <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <button type="submit" class="w-full px-4 py-2 bg-navy text-white rounded-lg text-sm font-semibold hover:bg-[#343d96] transition-colors">Filtrar</button>
+                        <div class="flex items-center gap-2">
+                            @if(count(request()->except(['page'])) > 0)
+                                <a href="{{ route('degree.applications.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-500 hover:text-navy transition-colors" title="Quitar filtros">
+                                    <span class="material-symbols-outlined text-lg">filter_alt_off</span>
+                                    Limpiar
+                                </a>
+                            @endif
+                            <p class="text-xs text-slate-400">Los filtros se aplican automáticamente</p>
                         </div>
                     </form>
                 </div>
@@ -72,7 +81,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('degree.applications.show', $application) }}" class="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <a href="{{ route('degree.applications.show', $application) }}" title="Ver detalle" aria-label="Ver detalle del expediente" class="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span class="material-symbols-outlined text-lg">visibility</span>
                                         </a>
                                     </td>

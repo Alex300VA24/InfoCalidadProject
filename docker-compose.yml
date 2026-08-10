@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: calidad_unt_app
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      APP_ENV: local
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: host.docker.internal
+      DB_PORT: 3306
+      DB_DATABASE: calidad_unt
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+    ports:
+      - "8000:8000"
+    command: sh -c 'php artisan serve --host=0.0.0.0 --port=8000 & SERVER=$$!; for i in $$(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:8000/ && break; sleep 1; done; (while true; do curl -fsS -o /dev/null http://127.0.0.1:8000/login; sleep 40; done) & wait $$SERVER'
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: calidad_unt_queue
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: mysql
+      DB_HOST: host.docker.internal
+      DB_PORT: 3306
+      DB_DATABASE: calidad_unt
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+    command: php artisan queue:listen --tries=1 --timeout=0
+    depends_on:
+      - app

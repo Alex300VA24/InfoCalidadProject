@@ -19,7 +19,7 @@ class TeacherPerformanceEvaluation extends Model
         'autoevaluacion' => 'Autoevaluación',
     ];
 
-    protected $table = 'teacher_performance_evaluations';
+    protected $table = 'app_ensenanza_aprendizaje.teacher_performance_evaluations';
 
     protected $fillable = [
         'teacher_id', 'academic_period_id', 'score', 'source',

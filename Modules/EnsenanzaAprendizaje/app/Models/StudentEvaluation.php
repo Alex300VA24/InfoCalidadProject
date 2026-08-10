@@ -12,6 +12,8 @@ use Modules\Core\Models\User;
 
 class StudentEvaluation extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.student_evaluations';
+
     use HasFactory;
 
     public const TYPES = [

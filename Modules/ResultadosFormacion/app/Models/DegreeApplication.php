@@ -10,6 +10,8 @@ use Modules\Core\Models\User;
 
 class DegreeApplication extends Model
 {
+    protected $table = 'app_resultados_formacion.degree_applications';
+
     use HasFactory;
 
     public const TYPES = [

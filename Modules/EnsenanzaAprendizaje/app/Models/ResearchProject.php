@@ -11,6 +11,8 @@ use Modules\Core\Models\User;
 
 class ResearchProject extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.research_projects';
+
     use HasFactory;
 
     public const STATUSES = [

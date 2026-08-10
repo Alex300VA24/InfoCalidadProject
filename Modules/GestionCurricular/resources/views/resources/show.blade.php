@@ -8,10 +8,10 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
                 <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-4">
                         <div><span class="text-gray-500">Código:</span> <strong>{{ $resourceRequest->code }}</strong></div>
                         <div><span class="text-gray-500">Estado:</span>
                             @switch($resourceRequest->status)
@@ -60,7 +60,7 @@
                                         <td class="px-4 py-2 text-sm">{{ $doc->document_number ?? '—' }}</td>
                                         <td class="px-4 py-2 text-sm">{{ $doc->subject ?? '—' }}</td>
                                         <td class="px-4 py-2 text-sm">
-                                            <a href="{{ route('resources.documents.download', $doc) }}" class="text-blue-600 hover:text-blue-900">Descargar</a>
+                                            <a data-turbo="false" href="{{ route('resources.documents.download', $doc) }}" class="text-blue-600 hover:text-blue-900">Descargar</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -95,7 +95,7 @@
                         <h3 class="font-semibold mb-4">Agregar Documento de Respuesta</h3>
                         <form method="POST" action="{{ route('resources.add-response', $resourceRequest) }}" enctype="multipart/form-data">
                             @csrf
-                            <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">N° de Documento</label>
                                     <input type="text" name="document_number" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 text-sm">

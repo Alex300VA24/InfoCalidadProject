@@ -6,10 +6,10 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
                 <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
                         <div><span class="text-gray-500">Carrera:</span> <strong>{{ $report->curriculumReview->career->name }}</strong></div>
                         <div><span class="text-gray-500">Periodo:</span> <strong>{{ $report->curriculumReview->academicPeriod->name }}</strong></div>
                         <div><span class="text-gray-500">Acción Curricular:</span> <strong>{{ $report->curriculumReview->actionType->name }}</strong></div>

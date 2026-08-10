@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Approval extends Model
 {
+    protected $table = 'app_gestion_curricular.approvals';
+
     use HasFactory;
 
     protected $fillable = ['technical_report_id', 'approver_id', 'decision', 'comments', 'approved_at'];

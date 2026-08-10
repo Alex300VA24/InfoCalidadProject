@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('app_ensenanza_aprendizaje.mobility_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('academic_period_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('core.students')->cascadeOnDelete();
+            $table->foreignId('academic_period_id')->constrained('core.academic_periods')->cascadeOnDelete();
             $table->string('type');
             $table->string('destination_institution')->nullable();
             $table->string('program_name')->nullable();

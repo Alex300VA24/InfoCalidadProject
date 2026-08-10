@@ -64,7 +64,7 @@
                     <h3 class="text-base font-bold text-navy">Actualizar Estado</h3>
                 </div>
                 <div class="p-6">
-                    <form method="POST" action="{{ route('degree.applications.status', $degreeApplication) }}" class="grid grid-cols-2 gap-3">
+                    <form method="POST" action="{{ route('degree.applications.status', $degreeApplication) }}" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @csrf
                         <select name="status" class="rounded-lg border-slate-200 text-sm">
                             @foreach(\Modules\ResultadosFormacion\Models\DegreeApplication::STATUSES as $key => $label)

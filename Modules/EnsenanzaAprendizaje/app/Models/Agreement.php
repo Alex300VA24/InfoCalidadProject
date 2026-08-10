@@ -20,7 +20,7 @@ class Agreement extends Model
         'resuelto' => 'Resuelto',
     ];
 
-    protected $table = 'agreements';
+    protected $table = 'app_ensenanza_aprendizaje.agreements';
 
     protected $fillable = [
         'name', 'institution', 'type', 'description',

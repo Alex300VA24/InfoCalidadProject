@@ -19,7 +19,7 @@ class AcademicTutoring extends Model
         'orientacion' => 'Orientación Vocacional',
     ];
 
-    protected $table = 'academic_tutoring';
+    protected $table = 'app_ensenanza_aprendizaje.academic_tutoring';
 
     protected $fillable = [
         'student_id', 'academic_period_id', 'tutor_id',

@@ -10,6 +10,8 @@ use Modules\Core\Models\Student;
 
 class Graduate extends Model
 {
+    protected $table = 'app_resultados_formacion.graduates';
+
     use HasFactory;
 
     public const WORK_STATUSES = [

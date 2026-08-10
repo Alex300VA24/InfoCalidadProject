@@ -142,8 +142,8 @@
     </div>
 
     @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    <script data-turbo-eval="true">
+        window.__onReady(function () {
             var bars = document.querySelectorAll('.nexo-progress em[data-width]');
             if (bars.length) {
                 requestAnimationFrame(function () {
@@ -153,13 +153,6 @@
                         });
                     });
                 });
-            }
-
-            var topbar = document.querySelector('.app-topbar');
-            if (topbar) {
-                var updateScrolled = function () { topbar.classList.toggle('is-scrolled', window.scrollY > 8); };
-                updateScrolled();
-                window.addEventListener('scroll', updateScrolled, { passive: true });
             }
         });
     </script>

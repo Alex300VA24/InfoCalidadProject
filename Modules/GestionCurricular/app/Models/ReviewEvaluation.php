@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReviewEvaluation extends Model
 {
+    protected $table = 'app_gestion_curricular.review_evaluations';
+
     use HasFactory;
 
     protected $fillable = ['curriculum_review_id', 'criterion_id', 'score', 'observations'];

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\ConciseBlueprint;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -14,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(Blueprint::class, ConciseBlueprint::class);
     }
 
     /**

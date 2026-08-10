@@ -4,12 +4,12 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
                     <form method="POST" action="{{ route('enrollment.store') }}">
                         @csrf
-                        <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Estudiante</label>
                                 <select name="student_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200">
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-turbo-eval="true">
         const container = document.getElementById('subjects-container');
         const loadSubjects = (careerId) => {
             container.innerHTML = '<p class="text-sm text-slate-400 col-span-full">Cargando asignaturas...</p>';

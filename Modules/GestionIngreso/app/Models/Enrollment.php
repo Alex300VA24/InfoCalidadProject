@@ -12,6 +12,8 @@ use Modules\Core\Models\Student;
 
 class Enrollment extends Model
 {
+    protected $table = 'app_gestion_ingreso.enrollments';
+
     use HasFactory;
 
     protected $fillable = ['code', 'student_id', 'academic_period_id', 'career_id', 'status', 'enrolled_at', 'ficha_path'];

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('app_resultados_formacion.degree_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('core.students')->cascadeOnDelete();
             $table->string('code')->unique();
             $table->string('type');
             $table->string('thesis_title')->nullable();

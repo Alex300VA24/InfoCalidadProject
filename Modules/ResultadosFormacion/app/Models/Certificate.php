@@ -9,6 +9,8 @@ use Modules\Core\Models\Student;
 
 class Certificate extends Model
 {
+    protected $table = 'app_resultados_formacion.certificates';
+
     use HasFactory;
 
     public const TYPES = [

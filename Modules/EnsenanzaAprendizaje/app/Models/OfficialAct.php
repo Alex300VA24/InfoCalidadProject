@@ -18,7 +18,7 @@ class OfficialAct extends Model
         'cerrado' => 'Cerrado',
     ];
 
-    protected $table = 'official_acts';
+    protected $table = 'app_ensenanza_aprendizaje.official_acts';
 
     protected $fillable = [
         'subject_id', 'teacher_id', 'academic_period_id',

@@ -60,7 +60,7 @@
                         <div class="flex justify-between px-6 py-3">
                             <dt class="text-slate-500">Documento</dt>
                             <dd class="font-semibold">
-                                <a href="{{ route('research.download', $researchProject) }}" class="inline-flex items-center gap-1 text-navy hover:underline">
+                                <a data-turbo="false" href="{{ route('research.download', $researchProject) }}" class="inline-flex items-center gap-1 text-navy hover:underline">
                                     <span class="material-symbols-outlined text-lg">download</span> Descargar
                                 </a>
                             </dd>
@@ -74,7 +74,7 @@
                     <h3 class="text-base font-bold text-navy">Actualizar Estado</h3>
                 </div>
                 <div class="p-6">
-                    <form method="POST" action="{{ route('research.status', $researchProject) }}" class="grid grid-cols-2 gap-3">
+                    <form method="POST" action="{{ route('research.status', $researchProject) }}" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         @csrf
                         <select name="status" class="rounded-lg border-slate-200 text-sm">
                             @foreach(\Modules\EnsenanzaAprendizaje\Models\ResearchProject::STATUSES as $key => $label)

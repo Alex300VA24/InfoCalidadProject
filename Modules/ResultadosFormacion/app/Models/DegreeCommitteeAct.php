@@ -20,7 +20,7 @@ class DegreeCommitteeAct extends Model
         'desaprobado' => 'Desaprobado',
     ];
 
-    protected $table = 'degree_committee_acts';
+    protected $table = 'app_resultados_formacion.degree_committee_acts';
 
     protected $fillable = [
         'degree_application_id', 'act_type', 'session_date',

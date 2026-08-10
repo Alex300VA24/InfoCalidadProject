@@ -5,7 +5,7 @@
                 {{ $syllabus->subject->code }} - {{ $syllabus->subject->name }}
             </h2>
             <div class="flex space-x-2">
-                <a href="{{ route('syllabi.download', $syllabus) }}" class="inline-flex items-center px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-500">Descargar PDF</a>
+                <a data-turbo="false" href="{{ route('syllabi.download', $syllabus) }}" class="inline-flex items-center px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-500">Descargar PDF</a>
                 @if(!$syllabus->is_visado)
                     <form method="POST" action="{{ route('syllabi.visa', $syllabus) }}" class="inline">
                         @csrf
@@ -17,10 +17,10 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
                         <div><span class="text-gray-500">Asignatura:</span> <strong>{{ $syllabus->subject->name }}</strong></div>
                         <div><span class="text-gray-500">Código:</span> <strong>{{ $syllabus->subject->code }}</strong></div>
                         <div><span class="text-gray-500">Carrera:</span> <strong>{{ $syllabus->career->name }}</strong></div>

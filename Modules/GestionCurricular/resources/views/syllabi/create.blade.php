@@ -6,12 +6,12 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
                     <form method="POST" action="{{ route('syllabi.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Carrera</label>
                                 <select name="career_id" id="career_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 text-sm">
@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <script>
+    <script data-turbo-eval="true">
         document.getElementById('career_id')?.addEventListener('change', function () {
             const subjectSelect = document.getElementById('subject_id');
             subjectSelect.innerHTML = '<option value="">Cargando asignaturas...</option>';

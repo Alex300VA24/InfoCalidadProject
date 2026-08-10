@@ -1307,3 +1307,109 @@ html.sidebar-open body {
     .nexo-notification { display: none; }
     .nexo-stat-grid--kpis { grid-template-columns: 1fr 1fr; }
 }
+
+/* ================================
+   OVERLAY DE CARGA (TURBO)
+   ================================ */
+#app-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(6, 18, 27, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 220ms ease, visibility 220ms ease;
+}
+#app-loading-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+#app-loading-overlay .loading-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-width: 240px;
+    padding: 30px 42px 28px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 26px;
+    box-shadow:
+        0 30px 80px -30px rgba(2, 20, 34, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transform: translateY(10px) scale(0.98);
+    transition: transform 260ms cubic-bezier(.22, 1, .36, 1);
+}
+#app-loading-overlay.is-visible .loading-card { transform: translateY(0) scale(1); }
+
+#app-loading-overlay .loading-card > img {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    object-fit: cover;
+    box-shadow: 0 0 26px rgba(74, 171, 255, 0.4);
+}
+
+.loading-spinner {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 30% 30%, rgba(133, 201, 255, 0.9), transparent 55%),
+        conic-gradient(from 0deg, #2188f3, #85c9ff, #fbc019, #2188f3);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 calc(100% - 5px));
+    animation: loadingSpin 0.9s linear infinite;
+    filter: drop-shadow(0 0 14px rgba(74, 171, 255, 0.55));
+}
+.loading-spinner::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    margin-left: -5px;
+    border-radius: 50%;
+    background: #fbc019;
+    box-shadow: 0 0 14px rgba(251, 192, 25, 0.9);
+    animation: pulseSoft 1.4s ease-in-out infinite;
+}
+@keyframes loadingSpin {
+    to { transform: rotate(360deg); }
+}
+
+#app-loading-overlay .loading-text { text-align: center; }
+#app-loading-overlay .loading-text strong {
+    display: block;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+#app-loading-overlay .loading-text small {
+    display: block;
+    margin-top: 6px;
+    color: #8fb0c1;
+    font-size: 11px;
+}
+.loading-dots::after {
+    content: '';
+    animation: loadingDots 1.3s steps(4, end) infinite;
+}
+@keyframes loadingDots {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+}

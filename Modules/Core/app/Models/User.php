@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Core\Database\Factories\UserFactory;
 
-#[Fillable(['name', 'email', 'password', 'career_id', 'role_id', 'dni', 'telefono', 'is_active'])]
+#[Fillable(['name', 'email', 'password', 'career_id', 'role_id', 'dni', 'telefono', 'is_active', 'text_scale', 'view_scale'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -27,6 +27,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'text_scale' => 'integer',
+            'view_scale' => 'integer',
         ];
     }
 

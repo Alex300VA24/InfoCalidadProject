@@ -11,6 +11,8 @@ use Modules\Core\Models\Career;
 
 class AdmissionProcess extends Model
 {
+    protected $table = 'app_gestion_ingreso.admission_processes';
+
     use HasFactory;
 
     public const STATUSES = [
