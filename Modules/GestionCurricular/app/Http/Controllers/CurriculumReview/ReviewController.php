@@ -2,6 +2,7 @@
 
 namespace Modules\GestionCurricular\Http\Controllers\CurriculumReview;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\GestionCurricular\Http\Requests\StoreCurriculumReviewRequest;
 use Modules\GestionCurricular\Http\Requests\CompleteReviewRequest;
@@ -18,9 +19,12 @@ class ReviewController extends Controller
     {
         $reviews = CurriculumReview::with(['checklistTemplate', 'academicPeriod', 'career', 'actionType', 'reviewer'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('curriculum.reviews.index', compact('reviews'));
+        return Inertia::render('Curriculum/Reviews/Index', [
+            'reviews' => $reviews,
+        ]);
     }
 
     public function create()
@@ -30,7 +34,12 @@ class ReviewController extends Controller
         $careers = Career::where('is_active', true)->orderBy('code')->get();
         $defaultCareer = Career::resolveDefault(request()->user());
 
-        return view('curriculum.reviews.create', compact('templates', 'periods', 'careers', 'defaultCareer'));
+        return Inertia::render('Curriculum/Reviews/Create', [
+            'templates' => $templates,
+            'periods' => $periods,
+            'careers' => $careers,
+            'defaultCareer' => $defaultCareer,
+        ]);
     }
 
     public function store(StoreCurriculumReviewRequest $request)
@@ -55,7 +64,10 @@ class ReviewController extends Controller
 
         $actionTypes = ActionType::all();
 
-        return view('curriculum.reviews.evaluate', compact('review', 'actionTypes'));
+        return Inertia::render('Curriculum/Reviews/Evaluate', [
+            'review' => $review,
+            'actionTypes' => $actionTypes,
+        ]);
     }
 
     public function saveEvaluation(Request $request, CurriculumReview $review)
@@ -105,6 +117,8 @@ class ReviewController extends Controller
     {
         $review->load(['checklistTemplate.criteria', 'evaluations.criterion', 'actionType', 'academicPeriod', 'career', 'reviewer', 'technicalReport']);
 
-        return view('curriculum.reviews.show', compact('review'));
+        return Inertia::render('Curriculum/Reviews/Show', [
+            'review' => $review,
+        ]);
     }
 }

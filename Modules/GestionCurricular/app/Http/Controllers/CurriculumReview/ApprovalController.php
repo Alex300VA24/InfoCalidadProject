@@ -2,6 +2,7 @@
 
 namespace Modules\GestionCurricular\Http\Controllers\CurriculumReview;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\GestionCurricular\Http\Requests\ApproveReportRequest;
 use Modules\GestionCurricular\Models\TechnicalReport;
@@ -15,16 +16,21 @@ class ApprovalController extends Controller
         $reports = TechnicalReport::with(['curriculumReview.career', 'curriculumReview.academicPeriod', 'curriculumReview.actionType', 'preparer', 'approval'])
             ->where('status', 'finalized')
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('curriculum.approvals.index', compact('reports'));
+        return Inertia::render('Curriculum/Approvals/Index', [
+            'reports' => $reports,
+        ]);
     }
 
     public function review(TechnicalReport $report)
     {
         $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer', 'approval']);
 
-        return view('curriculum.approvals.review', compact('report'));
+        return Inertia::render('Curriculum/Approvals/Review', [
+            'report' => $report,
+        ]);
     }
 
     public function approve(ApproveReportRequest $request, TechnicalReport $report)

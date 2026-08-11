@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\Career;
 use Modules\Core\Models\Role;
@@ -31,11 +32,16 @@ class ApplicantController extends Controller
             $query->where('career_id', $request->career_id);
         }
 
-        $applicants = $query->latest()->paginate(15);
+        $applicants = $query->latest()->paginate(15)->withQueryString();
         $processes = AdmissionProcess::latest()->get();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
 
-        return view('admission.applicants.index', compact('applicants', 'processes', 'careers'));
+        return Inertia::render('Admission/Applicants/Index', [
+            'applicants' => $applicants,
+            'processes' => $processes,
+            'careers' => $careers,
+            'filters' => $request->only(['admission_process_id', 'career_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -46,7 +52,10 @@ class ApplicantController extends Controller
             ->get();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
 
-        return view('admission.applicants.create', compact('processes', 'careers'));
+        return Inertia::render('Admission/Applicants/Create', [
+            'processes' => $processes,
+            'careers' => $careers,
+        ]);
     }
 
     public function store(StoreApplicantRequest $request)
@@ -61,7 +70,9 @@ class ApplicantController extends Controller
     {
         $applicant->load(['admissionProcess.academicPeriod', 'admissionProcess.career', 'career']);
 
-        return view('admission.applicants.show', compact('applicant'));
+        return Inertia::render('Admission/Applicants/Show', [
+            'applicant' => $applicant,
+        ]);
     }
 
     public function saveResult(Request $request, Applicant $applicant)

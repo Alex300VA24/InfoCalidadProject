@@ -11,6 +11,7 @@ use Modules\Core\Models\Career;
 use Modules\Core\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class SyllabusController extends Controller
 {
@@ -34,24 +35,32 @@ class SyllabusController extends Controller
             $query->where('is_visado', $request->is_visado === 'yes');
         }
 
-        $syllabi = $query->latest()->paginate(15);
-        $periods = AcademicPeriod::all();
+        $syllabi = $query->latest()->paginate(15)->withQueryString();
+        $periods = AcademicPeriod::all(['id', 'name']);
         $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
-        $careers = Career::where('is_active', true)->orderBy('code')->get();
+        $careers = Career::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name']);
         $defaultCareer = Career::resolveDefault($request->user());
+        $filters = $request->only([
+            'career_id', 'subject_id', 'academic_period_id', 'teacher_id', 'is_visado',
+        ]);
 
-        return view('syllabi.index', compact('syllabi', 'periods', 'teachers', 'careers', 'defaultCareer'));
+        return Inertia::render('Syllabi/Index', compact('syllabi', 'periods', 'teachers', 'careers', 'filters'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $periods = AcademicPeriod::all();
+        $periods = AcademicPeriod::all(['id', 'name']);
         $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
-        $careers = Career::where('is_active', true)->orderBy('code')->get();
-        $defaultCareer = Career::resolveDefault(request()->user());
-        $subjects = Subject::where('career_id', $defaultCareer?->id)->where('is_active', true)->get();
+        $careers = Career::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name']);
+        $defaultCareer = Career::resolveDefault($request->user());
+        $defaultCareerId = $request->filled('career_id')
+            ? $request->career_id
+            : ($defaultCareer?->id);
+        $subjects = Subject::where('career_id', $defaultCareerId)
+            ->where('is_active', true)
+            ->get(['id', 'code', 'name']);
 
-        return view('syllabi.create', compact('periods', 'teachers', 'careers', 'defaultCareer', 'subjects'));
+        return Inertia::render('Syllabi/Create', compact('periods', 'teachers', 'careers', 'defaultCareerId', 'subjects'));
     }
 
     public function store(StoreSyllabusRequest $request)
@@ -80,7 +89,7 @@ class SyllabusController extends Controller
     {
         $syllabus->load(['career', 'subject', 'academicPeriod', 'teacher', 'visas.visor']);
 
-        return view('syllabi.show', compact('syllabus'));
+        return Inertia::render('Syllabi/Show', compact('syllabus'));
     }
 
     public function download(Syllabus $syllabus)
