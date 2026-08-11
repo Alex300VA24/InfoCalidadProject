@@ -33,7 +33,7 @@ class RemedialProgramController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
         $statuses = RemedialProgram::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();

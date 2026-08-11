@@ -3,6 +3,7 @@
 namespace Modules\GestionIngreso\Http\Controllers\Enrollment;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -15,7 +16,8 @@ class ReportController extends Controller
         $students = Student::with('user')
             ->when($request->filled('career_id'), fn ($q) => $q->whereHas('user', fn ($u) => $u->where('career_id', $request->career_id)))
             ->orderBy('codigo')
-            ->paginate(15);
+            ->paginate(15)
+            ->withQueryString();
 
         $counts = Enrollment::query()
             ->whereIn('student_id', $students->pluck('id'))
@@ -23,7 +25,10 @@ class ReportController extends Controller
             ->groupBy('student_id')
             ->pluck('total', 'student_id');
 
-        return view('enrollment.reports.egresados', compact('students', 'counts'));
+        return Inertia::render('Enrollment/Reports/Egresados', [
+            'students' => $students,
+            'counts' => $counts,
+        ]);
     }
 
     public function cronograma()
@@ -36,6 +41,9 @@ class ReportController extends Controller
             ->get()
             ->keyBy('academic_period_id');
 
-        return view('enrollment.reports.cronograma', compact('periods', 'stats'));
+        return Inertia::render('Enrollment/Reports/Cronograma', [
+            'periods' => $periods,
+            'stats' => $stats,
+        ]);
     }
 }

@@ -39,8 +39,8 @@ class SubjectExecutionController extends Controller
     {
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
-        $syllabi = Syllabus::with(['subject', 'career'])->orderByDesc('version')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
+        $syllabi = Syllabus::with(['subject', 'career'])->orderByDesc('version')->limit(100)->get();
         $statuses = SubjectExecution::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 

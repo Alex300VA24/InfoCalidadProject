@@ -12,7 +12,8 @@ class AdmissionProcessController extends Controller
 {
     public function index()
     {
-        $processes = AdmissionProcess::with(['academicPeriod', 'career', 'applicants'])
+        $processes = AdmissionProcess::with(['academicPeriod', 'career'])
+            ->withCount(['applicants as ingresantes' => fn ($q) => $q->where('status', 'ingresante')])
             ->latest()
             ->paginate(10);
 
@@ -39,6 +40,10 @@ class AdmissionProcessController extends Controller
     public function show(AdmissionProcess $process)
     {
         $process->load(['academicPeriod', 'career', 'applicants.career']);
+        $process->loadCount([
+            'applicants as total_applicants',
+            'applicants as ingresantes' => fn ($q) => $q->where('status', 'ingresante'),
+        ]);
 
         return view('admission.processes.show', compact('process'));
     }

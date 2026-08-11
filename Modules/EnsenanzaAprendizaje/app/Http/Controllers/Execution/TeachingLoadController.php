@@ -25,7 +25,7 @@ class TeachingLoadController extends Controller
 
         $loads = $query->latest()->paginate(15);
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
 
         return view('execution.loads', compact('loads', 'periods', 'teachers'));
     }
@@ -34,7 +34,7 @@ class TeachingLoadController extends Controller
     {
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $statuses = TeachingLoad::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 

@@ -63,7 +63,7 @@
                             @csrf
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Acción Curricular</label>
-                                @foreach(\Modules\GestionCurricular\Models\ActionType::all() as $action)
+                                @foreach($actionTypes as $action)
                                     <div class="flex items-center mb-2">
                                         <input type="radio" name="action_type_id" value="{{ $action->id }}" required class="mr-2">
                                         <div>

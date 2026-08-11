@@ -36,7 +36,7 @@ class SyllabusController extends Controller
 
         $syllabi = $query->latest()->paginate(15);
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
         $careers = Career::where('is_active', true)->orderBy('code')->get();
         $defaultCareer = Career::resolveDefault($request->user());
 
@@ -46,7 +46,7 @@ class SyllabusController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
         $careers = Career::where('is_active', true)->orderBy('code')->get();
         $defaultCareer = Career::resolveDefault(request()->user());
         $subjects = Subject::where('career_id', $defaultCareer?->id)->where('is_active', true)->get();

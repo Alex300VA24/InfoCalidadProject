@@ -40,7 +40,10 @@ class ApplicantController extends Controller
 
     public function create()
     {
-        $processes = AdmissionProcess::where('status', '!=', 'cerrado')->latest()->get();
+        $processes = AdmissionProcess::with('academicPeriod')
+            ->where('status', '!=', 'cerrado')
+            ->latest()
+            ->get();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
 
         return view('admission.applicants.create', compact('processes', 'careers'));

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
@@ -21,7 +22,8 @@ class EnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Enrollment::with(['student.user', 'academicPeriod', 'career', 'subjects.subject']);
+        $query = Enrollment::with(['student.user', 'academicPeriod', 'career'])
+            ->withCount('subjects');
 
         if ($request->filled('academic_period_id')) {
             $query->where('academic_period_id', $request->academic_period_id);
@@ -33,11 +35,16 @@ class EnrollmentController extends Controller
             $query->where('status', $request->status);
         }
 
-        $enrollments = $query->latest()->paginate(15);
+        $enrollments = $query->latest()->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
 
-        return view('enrollment.index', compact('enrollments', 'periods', 'careers'));
+        return Inertia::render('Enrollment/Index', [
+            'enrollments' => $enrollments,
+            'periods' => $periods,
+            'careers' => $careers,
+            'filters' => $request->only(['academic_period_id', 'career_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -45,12 +52,18 @@ class EnrollmentController extends Controller
         $students = Student::with('user')
             ->where('estado', 'activo')
             ->orderBy('codigo')
+            ->limit(100)
             ->get();
         $periods = AcademicPeriod::all();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
         $defaultCareer = Career::resolveDefault(request()->user());
 
-        return view('enrollment.create', compact('students', 'periods', 'careers', 'defaultCareer'));
+        return Inertia::render('Enrollment/Create', [
+            'students' => $students,
+            'periods' => $periods,
+            'careers' => $careers,
+            'defaultCareer' => $defaultCareer,
+        ]);
     }
 
     public function store(StoreEnrollmentRequest $request)
@@ -113,7 +126,9 @@ class EnrollmentController extends Controller
     {
         $enrollment->load(['student.user', 'academicPeriod', 'career', 'subjects.subject', 'paymentOrders']);
 
-        return view('enrollment.show', compact('enrollment'));
+        return Inertia::render('Enrollment/Show', [
+            'enrollment' => $enrollment,
+        ]);
     }
 
     public function ficha(Enrollment $enrollment)
@@ -142,15 +157,38 @@ class EnrollmentController extends Controller
             ? AcademicPeriod::find($request->academic_period_id)
             : AcademicPeriod::where('is_active', true)->first();
 
-        $rows = EnrollmentSubject::with(['enrollment.student.user', 'enrollment.career', 'subject'])
-            ->whereHas('enrollment', fn ($q) => $q->where('academic_period_id', $period?->id))
-            ->whereHas('enrollment', fn ($q) => $q->where('status', 'matriculado'))
-            ->get()
-            ->groupBy(fn ($row) => $row->subject?->name ?? 'Sin asignatura');
+        $rows = collect();
+        if ($period) {
+            $grouped = DB::table('app_gestion_ingreso.enrollment_subjects as es')
+                ->join('app_gestion_ingreso.enrollments as e', 'e.id', '=', 'es.enrollment_id')
+                ->join('core.subjects as s', 's.id', '=', 'es.subject_id')
+                ->where('e.academic_period_id', $period->id)
+                ->where('e.status', 'matriculado')
+                ->select('es.enrollment_id', 's.name as subject_name')
+                ->get()
+                ->groupBy('subject_name');
+
+            if ($grouped->isNotEmpty()) {
+                $enrollmentIds = $grouped->flatten(1)->pluck('enrollment_id')->unique()->values();
+
+                $enrollments = Enrollment::with(['student.user', 'career'])
+                    ->whereIn('id', $enrollmentIds)
+                    ->get()
+                    ->keyBy('id');
+
+                $rows = $grouped->map(
+                    fn ($items) => $items->map(fn ($item) => $enrollments->get($item->enrollment_id))->filter()
+                );
+            }
+        }
 
         $periods = AcademicPeriod::all();
 
-        return view('enrollment.padron', compact('rows', 'period', 'periods'));
+        return Inertia::render('Enrollment/Padron', [
+            'rows' => $rows,
+            'period' => $period,
+            'periods' => $periods,
+        ]);
     }
 
     public function registerPayment(Request $request, PaymentOrder $paymentOrder)

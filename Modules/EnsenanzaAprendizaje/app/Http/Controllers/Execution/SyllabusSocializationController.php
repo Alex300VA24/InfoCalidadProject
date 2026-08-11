@@ -4,6 +4,7 @@ namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Execution;
 
 use Illuminate\Http\Request;
 use Modules\Core\Http\Controllers\Controller;
+use Modules\Core\Models\Subject;
 use Modules\Core\Models\User;
 use Modules\EnsenanzaAprendizaje\Http\Requests\StoreSyllabusSocializationRequest;
 use Modules\EnsenanzaAprendizaje\Models\SyllabusSocialization;
@@ -27,15 +28,19 @@ class SyllabusSocializationController extends Controller
         }
 
         $socializations = $query->latest('date')->paginate(15);
-        $users = User::orderBy('name')->get();
+        $users = User::orderBy('name')->limit(100)->get(['id', 'name']);
 
-        return view('execution.socializations', compact('socializations', 'users'));
+        $subjects = Subject::whereIn('id', Syllabus::distinct()->pluck('subject_id'))
+            ->orderBy('code')
+            ->get(['id', 'code', 'name']);
+
+        return view('execution.socializations', compact('socializations', 'users', 'subjects'));
     }
 
     public function create()
     {
         $syllabi = Syllabus::with(['subject', 'career'])->orderByDesc('version')->get();
-        $users = User::withRole('docente')->orderBy('name')->get();
+        $users = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
 
         return view('execution.socializations-create', compact('syllabi', 'users'));
     }

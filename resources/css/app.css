@@ -1413,3 +1413,44 @@ html.sidebar-open body {
     50% { content: '..'; }
     75% { content: '...'; }
 }
+
+/* ================================
+   Indicador de tiempos de respuesta (Turbo)
+   ================================ */
+#app-perf-badge {
+    position: fixed;
+    bottom: 14px;
+    right: 14px;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: min(340px, calc(100vw - 24px));
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(6, 18, 27, 0.82);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 8px 24px -8px rgba(2, 20, 34, 0.6);
+    pointer-events: none;
+}
+#app-perf-badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: #16a34a;
+}
+#app-perf-badge.is-slow .dot { background: #f59e0b; }
+#app-perf-badge.is-critical .dot { background: #dc2626; }
+#app-perf-badge .label { color: #c7d5de; }
+#app-perf-badge .ms { color: #fff; font-weight: 800; }
+

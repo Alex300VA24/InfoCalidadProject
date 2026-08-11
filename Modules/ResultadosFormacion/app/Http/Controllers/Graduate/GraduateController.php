@@ -27,7 +27,7 @@ class GraduateController extends Controller
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $workStatuses = Graduate::WORK_STATUSES;
 
         return view('graduates.create', compact('students', 'workStatuses'));
@@ -46,14 +46,15 @@ class GraduateController extends Controller
 
     public function show(Graduate $graduate)
     {
-        $graduate->load(['student.user']);
+        $graduate->load(['student.user', 'surveys']);
 
         return view('graduates.show', compact('graduate'));
     }
 
     public function edit(Graduate $graduate)
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $graduate->load(['student.user']);
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $workStatuses = Graduate::WORK_STATUSES;
 
         return view('graduates.edit', compact('graduate', 'students', 'workStatuses'));

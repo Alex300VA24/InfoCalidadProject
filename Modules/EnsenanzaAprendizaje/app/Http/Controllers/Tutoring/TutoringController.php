@@ -32,8 +32,8 @@ class TutoringController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
-        $tutors = User::withRole('tutor_academico')->orderBy('name')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
+        $tutors = User::withRole('tutor_academico')->orderBy('name')->limit(100)->get(['id', 'name']);
         $types = AcademicTutoring::TYPES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 

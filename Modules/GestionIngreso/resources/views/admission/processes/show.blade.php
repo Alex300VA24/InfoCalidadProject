@@ -29,11 +29,11 @@
                     <div class="text-sm text-slate-500 font-medium mt-1">Vacantes</div>
                 </div>
                 <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                    <div class="text-3xl font-bold text-navy">{{ $process->applicants()->count() }}</div>
+                    <div class="text-3xl font-bold text-navy">{{ $process->total_applicants }}</div>
                     <div class="text-sm text-slate-500 font-medium mt-1">Postulantes</div>
                 </div>
                 <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                    <div class="text-3xl font-bold text-emerald-600">{{ $process->ingresantesCount() }}</div>
+                    <div class="text-3xl font-bold text-emerald-600">{{ $process->ingresantes }}</div>
                     <div class="text-sm text-slate-500 font-medium mt-1">Ingresantes</div>
                 </div>
                 <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">

@@ -32,10 +32,10 @@
 
     <div class="meta">
         <table>
-            <tr><td class="label">Carrera:</td><td>{{ $report->curriculumReview->career->name }}</td></tr>
-            <tr><td class="label">Periodo Académico:</td><td>{{ $report->curriculumReview->academicPeriod->name }}</td></tr>
-            <tr><td class="label">Acción Curricular:</td><td>{{ $report->curriculumReview->actionType->name }}</td></tr>
-            <tr><td class="label">Preparado por:</td><td>{{ $report->preparer->name }}</td></tr>
+            <tr><td class="label">Carrera:</td><td>{{ $report->curriculumReview->career?->name }}</td></tr>
+            <tr><td class="label">Periodo Académico:</td><td>{{ $report->curriculumReview->academicPeriod?->name }}</td></tr>
+            <tr><td class="label">Acción Curricular:</td><td>{{ $report->curriculumReview->actionType?->name }}</td></tr>
+            <tr><td class="label">Preparado por:</td><td>{{ $report->preparer?->name }}</td></tr>
             <tr><td class="label">Fecha de elaboración:</td><td>{{ $report->created_at->format('d/m/Y') }}</td></tr>
             <tr><td class="label">Estado:</td>
                 <td>

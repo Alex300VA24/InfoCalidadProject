@@ -49,6 +49,10 @@ class AdmissionProcess extends Model
 
     public function ingresantesCount(): int
     {
+        if (array_key_exists('ingresantes', $this->getAttributes())) {
+            return (int) $this->ingresantes;
+        }
+
         return $this->applicants()->where('status', 'ingresante')->count();
     }
 

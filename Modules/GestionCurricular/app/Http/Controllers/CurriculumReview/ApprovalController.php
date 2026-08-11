@@ -12,7 +12,7 @@ class ApprovalController extends Controller
 {
     public function index()
     {
-        $reports = TechnicalReport::with(['curriculumReview.career', 'curriculumReview.academicPeriod', 'preparer', 'approval'])
+        $reports = TechnicalReport::with(['curriculumReview.career', 'curriculumReview.academicPeriod', 'curriculumReview.actionType', 'preparer', 'approval'])
             ->where('status', 'finalized')
             ->latest()
             ->paginate(10);

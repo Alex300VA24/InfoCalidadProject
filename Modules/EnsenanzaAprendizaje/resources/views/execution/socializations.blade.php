@@ -23,7 +23,7 @@
                         <div>
                             <select name="subject_id" onchange="this.form.submit()" aria-label="Filtrar por asignatura" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todas las asignaturas</option>
-                                @foreach($socializations->pluck('syllabus.subject')->filter()->unique('id') as $subject)
+                                @foreach($subjects as $subject)
                                     <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>{{ $subject->code }} - {{ $subject->name }}</option>
                                 @endforeach
                             </select>

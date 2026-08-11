@@ -22,8 +22,8 @@
                             @endswitch
                         </div>
                         <div><span class="text-gray-500">Tipo:</span> <strong>{{ ucfirst($resourceRequest->request_type) }}</strong></div>
-                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $resourceRequest->academicPeriod->name }}</strong></div>
-                        <div><span class="text-gray-500">Solicitante:</span> <strong>{{ $resourceRequest->applicant->name }}</strong></div>
+                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $resourceRequest->academicPeriod?->name }}</strong></div>
+                        <div><span class="text-gray-500">Solicitante:</span> <strong>{{ $resourceRequest->applicant?->name }}</strong></div>
                         <div><span class="text-gray-500">Fecha:</span> <strong>{{ $resourceRequest->created_at->format('d/m/Y') }}</strong></div>
                     </div>
 

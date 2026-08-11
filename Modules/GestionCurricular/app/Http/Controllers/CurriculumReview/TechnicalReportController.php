@@ -32,7 +32,7 @@ class TechnicalReportController extends Controller
 
     public function show(TechnicalReport $report)
     {
-        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer']);
+        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer', 'approval']);
 
         return view('curriculum.reports.show', compact('report'));
     }
@@ -64,7 +64,7 @@ class TechnicalReportController extends Controller
 
     public function pdf(TechnicalReport $report)
     {
-        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer']);
+        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer', 'approval.approver']);
 
         $pdf = app('dompdf.wrapper')->loadView('curriculum.reports.pdf', compact('report'));
 

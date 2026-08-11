@@ -31,7 +31,7 @@ class EvaluationController extends Controller
         $evaluations = $query->latest('evaluation_date')->paginate(15);
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
 
         return view('evaluation.index', compact('evaluations', 'periods', 'subjects', 'students'));
     }
@@ -40,7 +40,7 @@ class EvaluationController extends Controller
     {
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
         $types = StudentEvaluation::TYPES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
@@ -74,36 +74,35 @@ class EvaluationController extends Controller
 
         $rows = collect();
         if ($period && $subject) {
-            $rows = Student::with('user')
+            $students = Student::with('user')
                 ->whereIn('id', StudentEvaluation::where('academic_period_id', $period->id)
                     ->where('subject_id', $subject->id)
                     ->select('student_id')
                     ->distinct())
                 ->orderBy('codigo')
-                ->get()
-                ->map(function (Student $student) use ($period, $subject) {
-                    $evaluations = StudentEvaluation::where('student_id', $student->id)
-                        ->where('subject_id', $subject->id)
-                        ->where('academic_period_id', $period->id)
-                        ->get()
-                        ->keyBy('evaluation_type');
+                ->get();
 
-                    $weights = ['practica_1' => 10, 'practica_2' => 10, 'practica_3' => 10, 'examen_parcial' => 30, 'examen_final' => 40];
-                    $weighted = 0;
-                    $totalWeight = 0;
-                    foreach ($weights as $type => $weight) {
-                        if ($evaluations->has($type)) {
-                            $weighted += (float) $evaluations->get($type)->score * $weight;
-                            $totalWeight += $weight;
-                        }
+            $evaluationsByStudent = $this->evaluationsFor($period, $subject, $students->pluck('id'));
+
+            $rows = $students->map(function (Student $student) use ($evaluationsByStudent) {
+                $evaluations = $evaluationsByStudent->get($student->id) ?? collect();
+
+                $weights = ['practica_1' => 10, 'practica_2' => 10, 'practica_3' => 10, 'examen_parcial' => 30, 'examen_final' => 40];
+                $weighted = 0;
+                $totalWeight = 0;
+                foreach ($weights as $type => $weight) {
+                    if ($evaluations->has($type)) {
+                        $weighted += (float) $evaluations->get($type)->score * $weight;
+                        $totalWeight += $weight;
                     }
+                }
 
-                    return [
-                        'student' => $student,
-                        'evaluations' => $evaluations,
-                        'final' => $totalWeight > 0 ? round($weighted / $totalWeight, 2) : null,
-                    ];
-                });
+                return [
+                    'student' => $student,
+                    'evaluations' => $evaluations,
+                    'final' => $totalWeight > 0 ? round($weighted / $totalWeight, 2) : null,
+                ];
+            });
         }
 
         $periods = AcademicPeriod::all();
@@ -202,39 +201,48 @@ class EvaluationController extends Controller
 
     private function actaRows(AcademicPeriod $period, Subject $subject)
     {
-        return Student::with('user')
+        $students = Student::with('user')
             ->whereIn('id', StudentEvaluation::where('academic_period_id', $period->id)
                 ->where('subject_id', $subject->id)
                 ->select('student_id')
                 ->distinct())
             ->orderBy('codigo')
-            ->get()
-            ->map(function (Student $student) use ($period, $subject) {
-                $evaluations = StudentEvaluation::where('student_id', $student->id)
-                    ->where('subject_id', $subject->id)
-                    ->where('academic_period_id', $period->id)
-                    ->get()
-                    ->keyBy('evaluation_type');
+            ->get();
 
-                $weights = ['practica_1' => 10, 'practica_2' => 10, 'practica_3' => 10, 'examen_parcial' => 30, 'examen_final' => 40];
-                $weighted = 0;
-                $totalWeight = 0;
-                foreach ($weights as $type => $weight) {
-                    if ($evaluations->has($type)) {
-                        $weighted += (float) $evaluations->get($type)->score * $weight;
-                        $totalWeight += $weight;
-                    }
+        $evaluationsByStudent = $this->evaluationsFor($period, $subject, $students->pluck('id'));
+
+        return $students->map(function (Student $student) use ($evaluationsByStudent) {
+            $evaluations = $evaluationsByStudent->get($student->id) ?? collect();
+
+            $weights = ['practica_1' => 10, 'practica_2' => 10, 'practica_3' => 10, 'examen_parcial' => 30, 'examen_final' => 40];
+            $weighted = 0;
+            $totalWeight = 0;
+            foreach ($weights as $type => $weight) {
+                if ($evaluations->has($type)) {
+                    $weighted += (float) $evaluations->get($type)->score * $weight;
+                    $totalWeight += $weight;
                 }
+            }
 
-                return [
-                    'student' => $student,
-                    'p1' => $evaluations->get('practica_1')?->score,
-                    'p2' => $evaluations->get('practica_2')?->score,
-                    'p3' => $evaluations->get('practica_3')?->score,
-                    'parcial' => $evaluations->get('examen_parcial')?->score,
-                    'final' => $evaluations->get('examen_final')?->score,
-                    'promedio' => $totalWeight > 0 ? round($weighted / $totalWeight, 2) : null,
-                ];
-            });
+            return [
+                'student' => $student,
+                'p1' => $evaluations->get('practica_1')?->score,
+                'p2' => $evaluations->get('practica_2')?->score,
+                'p3' => $evaluations->get('practica_3')?->score,
+                'parcial' => $evaluations->get('examen_parcial')?->score,
+                'final' => $evaluations->get('examen_final')?->score,
+                'promedio' => $totalWeight > 0 ? round($weighted / $totalWeight, 2) : null,
+            ];
+        });
+    }
+
+    private function evaluationsFor(AcademicPeriod $period, Subject $subject, $studentIds): \Illuminate\Support\Collection
+    {
+        return StudentEvaluation::whereIn('student_id', $studentIds)
+            ->where('subject_id', $subject->id)
+            ->where('academic_period_id', $period->id)
+            ->get()
+            ->groupBy('student_id')
+            ->map(fn ($items) => $items->keyBy('evaluation_type'));
     }
 }

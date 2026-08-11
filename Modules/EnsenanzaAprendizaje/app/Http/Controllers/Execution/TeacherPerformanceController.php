@@ -27,7 +27,7 @@ class TeacherPerformanceController extends Controller
 
         $evaluations = $query->latest('evaluated_at')->paginate(15);
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $sources = TeacherPerformanceEvaluation::SOURCES;
 
         return view('execution.performance', compact('evaluations', 'periods', 'teachers', 'sources'));
@@ -36,7 +36,7 @@ class TeacherPerformanceController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $sources = TeacherPerformanceEvaluation::SOURCES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 

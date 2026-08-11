@@ -26,14 +26,14 @@ class CertificateController extends Controller
 
         $certificates = $query->latest('issued_at')->paginate(15);
         $types = Certificate::TYPES;
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
 
         return view('degree.certificates.index', compact('certificates', 'types', 'students'));
     }
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $types = Certificate::TYPES;
 
         return view('degree.certificates.create', compact('students', 'types'));

@@ -33,8 +33,8 @@ class DegreeApplicationController extends Controller
 
     public function create()
     {
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get();
         $types = DegreeApplication::TYPES;
 
         return view('degree.applications.create', compact('students', 'teachers', 'types'));
@@ -57,7 +57,7 @@ class DegreeApplicationController extends Controller
 
     public function show(DegreeApplication $degreeApplication)
     {
-        $degreeApplication->load(['student.user']);
+        $degreeApplication->load(['student.user', 'advisor']);
 
         return view('degree.applications.show', compact('degreeApplication'));
     }

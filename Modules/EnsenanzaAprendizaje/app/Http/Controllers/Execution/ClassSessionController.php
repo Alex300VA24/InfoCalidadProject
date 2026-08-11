@@ -37,7 +37,7 @@ class ClassSessionController extends Controller
     {
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $statuses = ClassSession::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
@@ -72,22 +72,30 @@ class ClassSessionController extends Controller
 
         $rows = collect();
         if ($period) {
-            $rows = Subject::with('career')
+            $subjects = Subject::with('career')
                 ->where('is_active', true)
-                ->get()
-                ->map(function (Subject $subject) use ($period) {
-                    $sessions = ClassSession::where('subject_id', $subject->id)
-                        ->where('academic_period_id', $period->id)
-                        ->where('status', '!=', 'cancelada')
-                        ->get();
+                ->get();
 
-                    $executedHours = (float) $sessions->sum('hours');
+            $totals = ClassSession::select('subject_id')
+                ->selectRaw('SUM(hours) as executed_hours')
+                ->selectRaw('COUNT(*) as sessions_count')
+                ->where('academic_period_id', $period->id)
+                ->where('status', '!=', 'cancelada')
+                ->groupBy('subject_id')
+                ->get()
+                ->keyBy('subject_id');
+
+            $rows = $subjects
+                ->map(function (Subject $subject) use ($totals) {
+                    $summary = $totals->get($subject->id);
+
+                    $executedHours = (float) ($summary?->executed_hours ?? 0);
                     $plannedHours = (float) $subject->hours;
                     $percentage = $plannedHours > 0 ? round(($executedHours / $plannedHours) * 100, 2) : 0;
 
                     return [
                         'subject' => $subject,
-                        'sessions_count' => $sessions->count(),
+                        'sessions_count' => (int) ($summary?->sessions_count ?? 0),
                         'executed_hours' => $executedHours,
                         'planned_hours' => $plannedHours,
                         'percentage' => $percentage,

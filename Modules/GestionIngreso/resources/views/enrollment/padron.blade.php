@@ -47,10 +47,10 @@
                                 @foreach($items as $index => $row)
                                     <tr>
                                         <td class="px-6 py-3">{{ $index + 1 }}</td>
-                                        <td class="px-6 py-3">{{ $row->enrollment?->student?->codigo }}</td>
-                                        <td class="px-6 py-3 font-semibold text-navy">{{ $row->enrollment?->student?->fullName() }}</td>
-                                        <td class="px-6 py-3 text-slate-500">{{ $row->enrollment?->career?->code }}</td>
-                                        <td class="px-6 py-3 text-slate-500">{{ $row->enrollment?->code }}</td>
+                                        <td class="px-6 py-3">{{ $row?->student?->codigo }}</td>
+                                        <td class="px-6 py-3 font-semibold text-navy">{{ $row?->student?->fullName() }}</td>
+                                        <td class="px-6 py-3 text-slate-500">{{ $row?->career?->code }}</td>
+                                        <td class="px-6 py-3 text-slate-500">{{ $row?->code }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

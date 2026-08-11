@@ -36,7 +36,7 @@ class MobilityController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
         $types = MobilityApplication::TYPES;
         $statuses = MobilityApplication::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();

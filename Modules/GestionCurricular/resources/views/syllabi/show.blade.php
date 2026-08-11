@@ -21,11 +21,11 @@
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mb-6">
-                        <div><span class="text-gray-500">Asignatura:</span> <strong>{{ $syllabus->subject->name }}</strong></div>
-                        <div><span class="text-gray-500">Código:</span> <strong>{{ $syllabus->subject->code }}</strong></div>
-                        <div><span class="text-gray-500">Carrera:</span> <strong>{{ $syllabus->career->name }}</strong></div>
-                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $syllabus->academicPeriod->name }}</strong></div>
-                        <div><span class="text-gray-500">Docente:</span> <strong>{{ $syllabus->teacher->name }}</strong></div>
+                        <div><span class="text-gray-500">Asignatura:</span> <strong>{{ $syllabus->subject?->name }}</strong></div>
+                        <div><span class="text-gray-500">Código:</span> <strong>{{ $syllabus->subject?->code }}</strong></div>
+                        <div><span class="text-gray-500">Carrera:</span> <strong>{{ $syllabus->career?->name }}</strong></div>
+                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $syllabus->academicPeriod?->name }}</strong></div>
+                        <div><span class="text-gray-500">Docente:</span> <strong>{{ $syllabus->teacher?->name }}</strong></div>
                         <div><span class="text-gray-500">Versión:</span> <strong>{{ $syllabus->version }}</strong></div>
                         <div>
                             <span class="text-gray-500">Visado:</span>

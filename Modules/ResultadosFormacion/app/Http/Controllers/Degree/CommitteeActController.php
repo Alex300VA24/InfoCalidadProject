@@ -13,8 +13,7 @@ class CommitteeActController extends Controller
     {
         $degreeApplication->load(['student.user']);
 
-        $acts = DegreeCommitteeAct::with('degreeApplication')
-            ->where('degree_application_id', $degreeApplication->id)
+        $acts = DegreeCommitteeAct::where('degree_application_id', $degreeApplication->id)
             ->latest('session_date')
             ->paginate(10);
 

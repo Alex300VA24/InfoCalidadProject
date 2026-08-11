@@ -11,6 +11,8 @@ use Modules\GestionIngreso\Models\AdmissionProcess;
 use Modules\GestionIngreso\Models\Applicant;
 use Modules\GestionIngreso\Models\Enrollment;
 use Modules\ResultadosFormacion\Models\GraduateSurvey;
+use Illuminate\Support\Facades\Cache;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -25,37 +27,54 @@ class DashboardController extends Controller
             'periodos' => AcademicPeriod::count(),
         ];
 
-        $kpis = $this->computeKpis($activePeriod);
+        $kpis = Cache::remember('dashboard.kpis', 360, fn () => $this->computeKpis($activePeriod));
 
-        return view('dashboard.index', compact('activePeriod', 'stats', 'kpis'));
+        $kpis['ingresantesPorModalidad'] = collect($kpis['ingresantesPorModalidad'] ?? []);
+        $kpis['matriculadosPorCarrera'] = collect($kpis['matriculadosPorCarrera'] ?? []);
+
+        return Inertia::render('Dashboard/Index', [
+            'activePeriod' => $activePeriod?->only(['id', 'name']),
+            'stats' => $stats,
+            'kpis' => $kpis,
+        ]);
     }
 
     private function computeKpis(?AcademicPeriod $activePeriod): array
     {
-        $processes = AdmissionProcess::with('applicants')->get();
-        $totalVacantes = (int) $processes->sum('vacancies');
+        $totalVacantes = (int) AdmissionProcess::sum('vacancies');
         $ingresantes = Applicant::where('status', 'ingresante')->count();
 
-        $cobertura = (float) $processes
-            ->filter(fn ($process) => $process->vacancies > 0)
-            ->avg(fn ($process) => $process->coveragePercentage());
+        $processes = AdmissionProcess::withCount([
+            'applicants as ingresantes' => fn ($query) => $query->where('status', 'ingresante'),
+        ])->get();
 
-        $ingresantesPorModalidad = Applicant::where('status', 'ingresante')
-            ->with('admissionProcess')
+        $eligible = $processes->where('vacancies', '>', 0);
+        $cobertura = $eligible->isNotEmpty()
+            ? (float) $eligible->avg(fn ($process) => ($process->ingresantes / $process->vacancies) * 100)
+            : 0.0;
+
+        $ingresantesPorModalidad = Applicant::query()
+            ->where('app_gestion_ingreso.applicants.status', 'ingresante')
+            ->leftJoin('app_gestion_ingreso.admission_processes as ap', 'ap.id', '=', 'app_gestion_ingreso.applicants.admission_process_id')
+            ->selectRaw("COALESCE(NULLIF(TRIM(ap.modality), ''), 'Sin modalidad') as modalidad, COUNT(*) as total")
+            ->groupBy('modalidad')
+            ->orderByDesc('total')
             ->get()
-            ->groupBy(fn ($applicant) => $applicant->admissionProcess?->modality ?? 'Sin modalidad')
-            ->map->count()
-            ->sortDesc();
+            ->pluck('total', 'modalidad')
+            ->toArray();
 
         $matriculados = Enrollment::where('status', 'matriculado')->count();
 
-        $matriculadosPorCarrera = Enrollment::where('status', 'matriculado')
+        $matriculadosPorCarrera = Enrollment::query()
+            ->where('app_gestion_ingreso.enrollments.status', 'matriculado')
             ->when($activePeriod, fn ($query) => $query->where('academic_period_id', $activePeriod->id))
-            ->with('career')
+            ->leftJoin('core.careers as c', 'c.id', '=', 'app_gestion_ingreso.enrollments.career_id')
+            ->selectRaw("COALESCE(NULLIF(TRIM(c.name), ''), 'Sin carrera') as carrera, COUNT(*) as total")
+            ->groupBy('carrera')
+            ->orderByDesc('total')
             ->get()
-            ->groupBy(fn ($enrollment) => $enrollment->career?->name ?? 'Sin carrera')
-            ->map->count()
-            ->sortDesc();
+            ->pluck('total', 'carrera')
+            ->toArray();
 
         $surveys = $this->surveyStats();
 
@@ -73,18 +92,19 @@ class DashboardController extends Controller
 
     private function surveyStats(): array
     {
-        $surveys = GraduateSurvey::all();
+        $count = GraduateSurvey::count();
 
-        if ($surveys->isEmpty()) {
+        if ($count === 0) {
             return ['encuestas' => 0, 'insercionLaboral' => 0, 'competenciaPromedio' => 0];
         }
 
-        $empleados = $surveys->where('employed', true)->count();
+        $empleados = GraduateSurvey::where('employed', true)->count();
+        $avgScore = (float) GraduateSurvey::whereNotNull('competency_level_score')->avg('competency_level_score');
 
         return [
-            'encuestas' => $surveys->count(),
-            'insercionLaboral' => round(($empleados / $surveys->count()) * 100, 2),
-            'competenciaPromedio' => round((float) $surveys->avg('competency_level_score'), 2),
+            'encuestas' => $count,
+            'insercionLaboral' => round(($empleados / $count) * 100, 2),
+            'competenciaPromedio' => round($avgScore, 2),
         ];
     }
 }

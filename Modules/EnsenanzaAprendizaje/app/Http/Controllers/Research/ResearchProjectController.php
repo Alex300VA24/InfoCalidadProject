@@ -33,8 +33,8 @@ class ResearchProjectController extends Controller
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
-        $advisors = User::withRole('docente')->orderBy('name')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
+        $advisors = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $statuses = ResearchProject::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 

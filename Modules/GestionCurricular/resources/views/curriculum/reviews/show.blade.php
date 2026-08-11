@@ -12,15 +12,15 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <div>
                             <span class="text-sm text-gray-500">Carrera:</span>
-                            <p class="font-medium">{{ $review->career->name }}</p>
+                            <p class="font-medium">{{ $review->career?->name }}</p>
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Periodo:</span>
-                            <p class="font-medium">{{ $review->academicPeriod->name }}</p>
+                            <p class="font-medium">{{ $review->academicPeriod?->name }}</p>
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Plantilla:</span>
-                            <p class="font-medium">{{ $review->checklistTemplate->code }}</p>
+                            <p class="font-medium">{{ $review->checklistTemplate?->code }}</p>
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Acción Curricular:</span>
@@ -28,7 +28,7 @@
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Revisor:</span>
-                            <p class="font-medium">{{ $review->reviewer->name }}</p>
+                            <p class="font-medium">{{ $review->reviewer?->name }}</p>
                         </div>
                         <div>
                             <span class="text-sm text-gray-500">Estado:</span>

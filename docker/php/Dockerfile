@@ -7,8 +7,9 @@ RUN apt-get update \
         libpng-dev \
         libjpeg62-turbo-dev \
         libfreetype6-dev \
+        libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" pdo_mysql mysqli bcmath pcntl intl zip gd exif \
+    && docker-php-ext-install -j"$(nproc)" pdo_mysql mysqli pdo_pgsql pgsql bcmath pcntl intl zip gd exif \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

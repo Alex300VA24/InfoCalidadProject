@@ -85,7 +85,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-slate-500">{{ $enrollment->academicPeriod?->name }}</td>
                                     <td class="px-6 py-4 text-slate-500">{{ $enrollment->career?->code }}</td>
-                                    <td class="px-6 py-4">{{ $enrollment->subjects_count ?? $enrollment->subjects->count() }}</td>
+                                    <td class="px-6 py-4">{{ $enrollment->subjects_count }}</td>
                                     <td class="px-6 py-4">
                                         <span class="px-3 py-1 rounded-full text-xs font-bold border
                                             {{ $enrollment->status === 'matriculado' ? 'text-emerald-700 bg-emerald-100 border-emerald-200' : ($enrollment->status === 'retirado' ? 'text-red-700 bg-red-100 border-red-200' : 'text-amber-700 bg-amber-100 border-amber-200') }}">

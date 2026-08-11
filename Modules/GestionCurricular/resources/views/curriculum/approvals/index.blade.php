@@ -26,10 +26,10 @@
                         <tbody class="divide-y divide-gray-200">
                             @forelse($reports as $report)
                                 <tr>
-                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->career->name }}</td>
-                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->academicPeriod->name }}</td>
-                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->actionType->name }}</td>
-                                    <td class="px-6 py-4 text-sm">{{ $report->preparer->name }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->career?->name }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->academicPeriod?->name }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ $report->curriculumReview->actionType?->name }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ $report->preparer?->name }}</td>
                                     <td class="px-6 py-4 text-sm">
                                         @if($report->approval)
                                             <span class="px-2 py-1 text-xs rounded-full {{ $report->approval->decision === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
