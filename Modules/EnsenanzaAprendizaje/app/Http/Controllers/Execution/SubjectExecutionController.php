@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Execution;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Subject;
@@ -27,12 +28,18 @@ class SubjectExecutionController extends Controller
             $query->where('status', $request->status);
         }
 
-        $executions = $query->latest()->paginate(15);
+        $executions = $query->latest()->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
         $statuses = SubjectExecution::STATUSES;
 
-        return view('execution.executions', compact('executions', 'periods', 'subjects', 'statuses'));
+        return Inertia::render('Execution/Executions/Index', [
+            'executions' => $executions,
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'subject_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -44,7 +51,14 @@ class SubjectExecutionController extends Controller
         $statuses = SubjectExecution::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('execution.executions-create', compact('periods', 'subjects', 'teachers', 'syllabi', 'statuses', 'defaultPeriod'));
+        return Inertia::render('Execution/Executions/Create', [
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'teachers' => $teachers,
+            'syllabi' => $syllabi,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreSubjectExecutionRequest $request)

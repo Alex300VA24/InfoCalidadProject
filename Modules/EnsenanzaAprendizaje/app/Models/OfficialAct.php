@@ -55,6 +55,11 @@ class OfficialAct extends Model
         return self::STATUSES[$this->status] ?? $this->status;
     }
 
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
+    }
+
     public function isClosed(): bool
     {
         return $this->status === 'cerrado';

@@ -85,6 +85,32 @@ class SmokeNewPagesTest extends TestCase
         }
     }
 
+    public function test_evaluations_pages_use_inertia(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->get('/evaluations')->assertStatus(200)->assertSee('Evaluations\\/Index');
+        $this->get('/evaluations/create')->assertStatus(200)->assertSee('Evaluations\\/Create');
+        $this->get('/evaluations/record')->assertStatus(200)->assertSee('Evaluations\\/Record');
+        $this->get('/evaluations/actas')->assertStatus(200)->assertSee('Evaluations\\/Actas');
+    }
+
+    public function test_execution_pages_use_inertia(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->get('/execution/loads')->assertStatus(200)->assertSee('Execution\\/Loads\\/Index');
+        $this->get('/execution/loads/create')->assertStatus(200)->assertSee('Execution\\/Loads\\/Create');
+        $this->get('/execution/socializations')->assertStatus(200)->assertSee('Execution\\/Socializations\\/Index');
+        $this->get('/execution/socializations/create')->assertStatus(200)->assertSee('Execution\\/Socializations\\/Create');
+        $this->get('/execution/executions')->assertStatus(200)->assertSee('Execution\\/Executions\\/Index');
+        $this->get('/execution/executions/create')->assertStatus(200)->assertSee('Execution\\/Executions\\/Create');
+        $this->get('/execution/performance')->assertStatus(200)->assertSee('Execution\\/Performance\\/Index');
+        $this->get('/execution/performance/create')->assertStatus(200)->assertSee('Execution\\/Performance\\/Create');
+        $this->get('/execution')->assertStatus(200)->assertSee('Execution\\/ClassSessions\\/Index');
+        $this->get('/execution/coverage')->assertStatus(200)->assertSee('Execution\\/ClassSessions\\/Coverage');
+    }
+
     public function test_nested_pages_render(): void
     {
         $this->actingAs($this->user);

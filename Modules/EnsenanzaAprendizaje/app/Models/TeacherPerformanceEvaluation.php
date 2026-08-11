@@ -48,4 +48,9 @@ class TeacherPerformanceEvaluation extends Model
     {
         return self::SOURCES[$this->source] ?? $this->source;
     }
+
+    public function getSourceLabelAttribute(): string
+    {
+        return $this->sourceLabel();
+    }
 }

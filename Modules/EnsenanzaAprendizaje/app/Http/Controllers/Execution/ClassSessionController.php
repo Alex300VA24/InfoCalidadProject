@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Execution;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Subject;
@@ -26,11 +27,16 @@ class ClassSessionController extends Controller
             $query->where('status', $request->status);
         }
 
-        $sessions = $query->latest('session_date')->paginate(15);
+        $sessions = $query->latest('session_date')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
 
-        return view('execution.index', compact('sessions', 'periods', 'subjects'));
+        return Inertia::render('Execution/ClassSessions/Index', [
+            'sessions' => $sessions,
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'filters' => $request->only(['academic_period_id', 'subject_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -41,7 +47,13 @@ class ClassSessionController extends Controller
         $statuses = ClassSession::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('execution.create', compact('periods', 'subjects', 'teachers', 'statuses', 'defaultPeriod'));
+        return Inertia::render('Execution/ClassSessions/Create', [
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'teachers' => $teachers,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreClassSessionRequest $request)
@@ -61,7 +73,9 @@ class ClassSessionController extends Controller
     {
         $classSession->load(['subject.career', 'academicPeriod', 'teacher']);
 
-        return view('execution.show', compact('classSession'));
+        return Inertia::render('Execution/ClassSessions/Show', [
+            'classSession' => $classSession,
+        ]);
     }
 
     public function coverage(Request $request)
@@ -106,6 +120,10 @@ class ClassSessionController extends Controller
 
         $periods = AcademicPeriod::all();
 
-        return view('execution.coverage', compact('rows', 'period', 'periods'));
+        return Inertia::render('Execution/ClassSessions/Coverage', [
+            'rows' => $rows,
+            'period' => $period,
+            'periods' => $periods,
+        ]);
     }
 }

@@ -4,6 +4,7 @@ namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Evaluation;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -28,12 +29,18 @@ class EvaluationController extends Controller
             $query->where('student_id', $request->student_id);
         }
 
-        $evaluations = $query->latest('evaluation_date')->paginate(15);
+        $evaluations = $query->latest('evaluation_date')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
         $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
 
-        return view('evaluation.index', compact('evaluations', 'periods', 'subjects', 'students'));
+        return Inertia::render('Evaluations/Index', [
+            'evaluations' => $evaluations,
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'students' => $students,
+            'filters' => $request->only(['academic_period_id', 'subject_id', 'student_id']),
+        ]);
     }
 
     public function create()
@@ -44,7 +51,13 @@ class EvaluationController extends Controller
         $types = StudentEvaluation::TYPES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('evaluation.create', compact('periods', 'subjects', 'students', 'types', 'defaultPeriod'));
+        return Inertia::render('Evaluations/Create', [
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'students' => $students,
+            'types' => $types,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreStudentEvaluationRequest $request)
@@ -61,7 +74,9 @@ class EvaluationController extends Controller
     {
         $evaluation->load(['student.user', 'subject.career', 'academicPeriod', 'registrar']);
 
-        return view('evaluation.show', compact('evaluation'));
+        return Inertia::render('Evaluations/Show', [
+            'evaluation' => $evaluation,
+        ]);
     }
 
     public function record(Request $request)
@@ -108,7 +123,13 @@ class EvaluationController extends Controller
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
 
-        return view('evaluation.record', compact('rows', 'period', 'subject', 'periods', 'subjects'));
+        return Inertia::render('Evaluations/Record', [
+            'rows' => $rows,
+            'period' => $period,
+            'subject' => $subject,
+            'periods' => $periods,
+            'subjects' => $subjects,
+        ]);
     }
 
     public function actaPdf(Request $request)
@@ -137,12 +158,18 @@ class EvaluationController extends Controller
             $query->where('status', $request->status);
         }
 
-        $acts = $query->latest()->paginate(15);
+        $acts = $query->latest()->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
         $statuses = OfficialAct::STATUSES;
 
-        return view('evaluation.actas', compact('acts', 'periods', 'subjects', 'statuses'));
+        return Inertia::render('Evaluations/Actas', [
+            'acts' => $acts,
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'subject_id', 'status']),
+        ]);
     }
 
     public function generarActa(Request $request)
@@ -225,7 +252,11 @@ class EvaluationController extends Controller
             }
 
             return [
-                'student' => $student,
+                'student' => [
+                    'id' => $student->id,
+                    'codigo' => $student->codigo,
+                    'full_name' => $student->fullName(),
+                ],
                 'p1' => $evaluations->get('practica_1')?->score,
                 'p2' => $evaluations->get('practica_2')?->score,
                 'p3' => $evaluations->get('practica_3')?->score,

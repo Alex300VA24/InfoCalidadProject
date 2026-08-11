@@ -62,4 +62,9 @@ class StudentEvaluation extends Model
     {
         return self::TYPES[$this->evaluation_type] ?? $this->evaluation_type;
     }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
 }
