@@ -26,6 +26,17 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
-.impeccable/
+# Recursos de IA / Skills (no deben subirse al repositorio)
 .agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.impeccable/
+.opencode/
+opencode.json
+opencode.jsonc
+AGENTS.md
 CLAUDE.md
+skills-lock.json
+docs/superpowers/

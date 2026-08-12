@@ -2,14 +2,23 @@
 
 Este repositorio contiene una aplicación Laravel modular para la gestión académica universitaria. La aplicación principal está en este mismo repositorio y utiliza el paquete `nwidart/laravel-modules` para cargar los módulos desde `Modules/`.
 
+## Stack
+
+- **Backend:** Laravel 13 (PHP 8.3+) organizado en módulos independientes con sus propias rutas, controladores, migraciones y tests.
+- **Frontend:** React 19 con Inertia.js 3 (renderizado dirigido por el servidor).
+- **Bundling:** Vite 8 con el plugin de Laravel.
+- **Estilos:** Tailwind CSS 3 con PostCSS.
+- **Base de datos:** PostgreSQL 17 (vía Docker) o SQLite (desarrollo local).
+
 ## Estructura principal
 
 - `/`: raíz del proyecto Laravel.
 - `app/`: código principal de la aplicación Laravel.
 - `bootstrap/`, `config/`, `database/`, `resources/`, `routes/`, `storage/`, `vendor/`: estructura clásica de Laravel.
-- `Modules/`: módulos independientes de la aplicación.
+- `Modules/`: módulos independientes de la aplicación. Cada módulo contiene su propio código (`app/`), migraciones y seeders (`database/`), rutas (`routes/`), componentes React (`resources/js/Pages/`) y tests.
+- `Modules/{Modulo}/database/migrations/`: esquema de base de datos de cada módulo.
 - `public/`: punto de entrada web.
-- `package.json`: scripts frontend y dependencias Vite/Tailwind.
+- `package.json`: scripts frontend y dependencias React/Inertia/Vite/Tailwind.
 - `composer.json`: dependencias PHP y scripts de Composer.
 - `modules_statuses.json`: lista de módulos habilitados.
 - `.env.example`: configuración de entorno.
@@ -17,12 +26,22 @@ Este repositorio contiene una aplicación Laravel modular para la gestión acad�
 ## Requisitos previos
 
 - PHP 8.3 o superior.
-- Composer.
+- Composer 2.
 - Node.js y npm.
-- Extensiones PHP recomendadas: `pdo_sqlite`, `pdo_mysql`, `openssl`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`.
+- Extensiones PHP recomendadas: `pdo_sqlite`, `pdo_pgsql`, `openssl`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`.
 - En Windows, PowerShell es útil para ejecutar comandos.
 
 ## Instalación
+
+### Instalación rápida (recomendada)
+
+El script `composer run setup` instala dependencias, crea el `.env`, genera la clave, ejecuta migraciones e instala/construye los assets:
+
+```powershell
+composer run setup
+```
+
+### Instalación paso a paso
 
 1. Abrir terminal en la raíz del proyecto:
 
@@ -48,7 +67,7 @@ Este repositorio contiene una aplicación Laravel modular para la gestión acad�
    php artisan key:generate
    ```
 
-5. Ejecutar migraciones de base de datos:
+5. Ejecutar migraciones de base de datos (incluye las de los módulos):
 
    ```powershell
    php artisan migrate --force
@@ -66,6 +85,11 @@ Este repositorio contiene una aplicación Laravel modular para la gestión acad�
    npm run build
    ```
 
+### Nota sobre la base de datos
+
+- Por defecto `.env.example` usa **SQLite** (`DB_CONNECTION=sqlite`), con el archivo `database/database.sqlite` ya presente. No requiere configuración adicional.
+- Si quieres usar **PostgreSQL**, ajusta en tu `.env`: `DB_CONNECTION=pgsql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` y `DB_SCHEMA` con los esquemas de los módulos. La forma más sencilla de levantar PostgreSQL es con Docker (ver más abajo).
+
 ## Instalación con Docker
 
 El proyecto incluye una configuración Docker (`docker-compose.yml` y `docker/php/Dockerfile`) que levanta tres servicios:
@@ -82,13 +106,13 @@ La base de datos usa la misma configuración que el `.env` de desarrollo (`plata
 
 ### Pasos
 
-1. Crear el archivo de entorno del contenedor. Está basado en tu `.env`, pero apunta a la base de datos del servicio `db`:
+1. Crear el archivo de entorno del contenedor. Está basado en tu `.env`, pero apunta a la base de datos del servicio `db` (PostgreSQL). Si tu `.env` usa SQLite, asegúrate de que `.env.docker` tenga `DB_CONNECTION=pgsql`:
 
    ```powershell
    copy .env .env.docker
    ```
 
-   Y en `.env.docker` cambia `DB_HOST` a `db`:
+   Y en `.env.docker` cambia `DB_HOST` a `db` y, si es necesario, `DB_CONNECTION` a `pgsql`:
 
    ```powershell
    (Get-Content .env.docker -Raw) -replace 'DB_HOST=127.0.0.1', 'DB_HOST=db' | Set-Content .env.docker
@@ -175,6 +199,14 @@ La base de datos usa la misma configuración que el `.env` de desarrollo (`plata
 
 ## Ejecución local
 
+### Todo en uno (recomendado)
+
+Levanta el servidor Artisan, el worker de colas, el log `pail` y Vite en modo desarrollo con un solo comando:
+
+```powershell
+composer run dev
+```
+
 ### Usar Artisan directamente
 
 ```powershell
@@ -195,6 +227,12 @@ npm run dev
   composer run setup
   ```
 
+- Iniciar todo el entorno de desarrollo (server + queue + logs + Vite):
+
+  ```powershell
+  composer run dev
+  ```
+
 - Iniciar el servidor Vite:
 
   ```powershell
@@ -207,10 +245,29 @@ npm run dev
   npm run build
   ```
 
+- Build de CSS o JS por separado:
+
+  ```powershell
+  npm run build:css
+  npm run build:js
+  ```
+
 - Ejecutar pruebas:
 
   ```powershell
   composer run test
+  ```
+
+- Listar módulos y su estado:
+
+  ```powershell
+  php artisan module:list
+  ```
+
+- Listar rutas:
+
+  ```powershell
+  php artisan route:list
   ```
 
 - Limpiar caché de configuración:
@@ -221,9 +278,12 @@ npm run dev
 
 ## Notas importantes
 
-- El proyecto utiliza `sqlite` por defecto en `.env.example` y existe el archivo `database/database.sqlite`.
+- El proyecto utiliza `sqlite` por defecto en `.env.example` y existe el archivo `database/database.sqlite`. Para PostgreSQL (Docker) usa `.env.docker`.
 - Los módulos están habilitados en `modules_statuses.json` y cargados con `nwidart/laravel-modules`.
-- Las rutas de la aplicación principal se definen en `Modules/Core/routes/web.php` y los módulos adicionales también suelen cargar sus propias rutas desde `Modules/{Nombre}/routes/`.
+- Las migraciones de cada módulo se encuentran en `Modules/{Modulo}/database/migrations/` y se ejecutan con `php artisan migrate` (el paquete de módulos las carga automáticamente).
+- Las rutas de la aplicación principal se definen en `Modules/Core/routes/web.php` y los módulos adicionales cargan sus propias rutas desde `Modules/{Nombre}/routes/`.
+- Los componentes de interfaz viven en `Modules/{Modulo}/resources/js/Pages/` y se sirven mediante Inertia.js desde los controladores.
+- Los tests usan PostgreSQL (`phpunit.xml`): crea la base `plataforma_calidad_test` con los esquemas de los módulos antes de ejecutar `composer run test`.
 
 ## Módulos presentes
 
