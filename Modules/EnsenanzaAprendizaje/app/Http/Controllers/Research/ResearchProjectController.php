@@ -4,6 +4,7 @@ namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Research;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -24,10 +25,16 @@ class ResearchProjectController extends Controller
             $query->where('status', $request->status);
         }
 
-        $projects = $query->latest('created_at')->paginate(15);
+        $projects = $query->latest('created_at')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
+        $statuses = ResearchProject::STATUSES;
 
-        return view('research.index', compact('projects', 'periods'));
+        return Inertia::render('ResearchProjects/Index', [
+            'projects' => $projects,
+            'periods' => $periods,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -38,7 +45,13 @@ class ResearchProjectController extends Controller
         $statuses = ResearchProject::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('research.create', compact('periods', 'students', 'advisors', 'statuses', 'defaultPeriod'));
+        return Inertia::render('ResearchProjects/Create', [
+            'periods' => $periods,
+            'students' => $students,
+            'advisors' => $advisors,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreResearchProjectRequest $request)
@@ -61,7 +74,9 @@ class ResearchProjectController extends Controller
     {
         $researchProject->load(['student.user', 'academicPeriod', 'advisor']);
 
-        return view('research.show', compact('researchProject'));
+        return Inertia::render('ResearchProjects/Show', [
+            'researchProject' => $researchProject,
+        ]);
     }
 
     public function updateStatus(Request $request, ResearchProject $researchProject)

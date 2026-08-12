@@ -22,6 +22,14 @@ export default function EvaluationsActas({ acts, periods, subjects, statuses, fi
     return (
         <div className="page-enter">
             <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                <div className="mb-6">
+                    <span className="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">
+                        Evaluación del Estudiante
+                    </span>
+                    <h2 className="text-3xl font-bold text-navy mt-2">Actas Oficiales</h2>
+                    <p className="text-slate-500">Generación y gestión de actas oficiales de notas por asignatura y periodo.</p>
+                </div>
+
                 <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">
                     <div className="p-4">
                         <form className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">

@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Tutoring;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -23,10 +24,16 @@ class TutoringController extends Controller
             $query->where('status', $request->status);
         }
 
-        $tutorings = $query->latest('tutoring_date')->paginate(15);
+        $tutorings = $query->latest('tutoring_date')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
+        $statuses = AcademicTutoring::STATUSES;
 
-        return view('tutoring.index', compact('tutorings', 'periods'));
+        return Inertia::render('Tutoring/Index', [
+            'tutorings' => $tutorings,
+            'periods' => $periods,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'status']),
+        ]);
     }
 
     public function create()
@@ -35,9 +42,17 @@ class TutoringController extends Controller
         $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
         $tutors = User::withRole('tutor_academico')->orderBy('name')->limit(100)->get(['id', 'name']);
         $types = AcademicTutoring::TYPES;
+        $statuses = AcademicTutoring::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('tutoring.create', compact('periods', 'students', 'tutors', 'types', 'defaultPeriod'));
+        return Inertia::render('Tutoring/Create', [
+            'periods' => $periods,
+            'students' => $students,
+            'tutors' => $tutors,
+            'types' => $types,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreAcademicTutoringRequest $request)
@@ -55,7 +70,9 @@ class TutoringController extends Controller
     {
         $academicTutoring->load(['student.user', 'academicPeriod', 'tutor']);
 
-        return view('tutoring.show', compact('academicTutoring'));
+        return Inertia::render('Tutoring/Show', [
+            'academicTutoring' => $academicTutoring,
+        ]);
     }
 
     public function complete(AcademicTutoring $academicTutoring)

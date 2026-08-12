@@ -11,9 +11,10 @@ use Modules\Core\Http\Controllers\Auth\RegisteredUserController;
 use Modules\Core\Http\Controllers\Auth\VerifyEmailController;
 use Modules\Core\Http\Controllers\Dashboard\DashboardController;
 use Modules\Core\Http\Controllers\ProfileController;
+use Modules\Core\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome');
+Route::get('/', WelcomeController::class);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

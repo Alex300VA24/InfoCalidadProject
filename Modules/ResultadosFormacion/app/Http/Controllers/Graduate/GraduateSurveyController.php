@@ -2,6 +2,7 @@
 
 namespace Modules\ResultadosFormacion\Http\Controllers\Graduate;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\ResultadosFormacion\Http\Requests\StoreGraduateSurveyRequest;
 use Modules\ResultadosFormacion\Models\Graduate;
@@ -13,7 +14,9 @@ class GraduateSurveyController extends Controller
     {
         $graduate->load(['student.user', 'surveys']);
 
-        return view('graduates.surveys-create', compact('graduate'));
+        return Inertia::render('GraduateSurveys/Create', [
+            'graduate' => $graduate,
+        ]);
     }
 
     public function store(StoreGraduateSurveyRequest $request, Graduate $graduate)

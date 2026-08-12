@@ -39,4 +39,9 @@ class Certificate extends Model
     {
         return self::TYPES[$this->type] ?? $this->type;
     }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
 }

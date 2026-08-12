@@ -1,10 +1,16 @@
-import { useEffect, useMemo } from 'react'
-import { useForm, router } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
+import { useForm } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 
-export default function SyllabiCreate({ periods, teachers, careers, defaultCareerId, defaultSubjects }) {
+export default function SyllabiCreate({
+    periods = [],
+    teachers = [],
+    careers = [],
+    defaultCareerId = '',
+    subjects: initialSubjects = [],
+}) {
     const { data, setData, post, processing, errors } = useForm({
-        career_id: defaultCareerId ?? '',
+        career_id: defaultCareerId ? String(defaultCareerId) : '',
         subject_id: '',
         academic_period_id: '',
         teacher_id: '',
@@ -12,32 +18,70 @@ export default function SyllabiCreate({ periods, teachers, careers, defaultCaree
         file: null,
     })
 
-    const subjects = useMemo(() => defaultSubjects ?? [], [defaultSubjects])
+    const [subjects, setSubjects] = useState(initialSubjects)
+    const [loadingSubjects, setLoadingSubjects] = useState(false)
 
     useEffect(() => {
         const careerId = data.career_id
+
+        setData('subject_id', '')
+
         if (!careerId) {
-            if (data.subject_id) setData('subject_id', '')
+            setSubjects([])
             return
         }
 
-        const ac = new AbortController()
-        fetch(`/syllabi/subjects?career_id=${encodeURIComponent(careerId)}`, {
-            headers: { Accept: 'application/json' },
-            signal: ac.signal,
-        })
-            .then((r) => r.ok ? r.json() : Promise.reject(r))
-            .then((list) => {
-                router.get('/syllabi/create', { career_id: careerId }, {
-                    only: [],
-                    replace: false,
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: () => {},
-                })
-            })
-            .catch(() => {})
-        return () => ac.abort()
+        const controller = new AbortController()
+
+        async function loadSubjects() {
+            setLoadingSubjects(true)
+
+            try {
+                const response = await fetch(
+                    `/syllabi/subjects?career_id=${encodeURIComponent(careerId)}`,
+                    {
+                        headers: {
+                            Accept: 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        signal: controller.signal,
+                    }
+                )
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Error ${response.status} al cargar asignaturas`
+                    )
+                }
+
+                const result = await response.json()
+
+                console.log('Respuesta de asignaturas:', result)
+
+                const subjectList = Array.isArray(result)
+                    ? result
+                    : Array.isArray(result.subjects)
+                        ? result.subjects
+                        : Array.isArray(result.data)
+                            ? result.data
+                            : []
+
+                setSubjects(subjectList)
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Error cargando asignaturas:', error)
+                    setSubjects([])
+                }
+            } finally {
+                if (!controller.signal.aborted) {
+                    setLoadingSubjects(false)
+                }
+            }
+        }
+
+        loadSubjects()
+
+        return () => controller.abort()
     }, [data.career_id])
 
     const onFileChange = (e) => {
@@ -92,15 +136,28 @@ export default function SyllabiCreate({ periods, teachers, careers, defaultCaree
                                 <select
                                     value={data.subject_id}
                                     onChange={(e) => setData('subject_id', e.target.value)}
-                                    className={`w-full rounded-lg ${errors.subject_id ? 'border-red-400 focus:ring-red-200' : 'border-slate-200'}`}
-                                    disabled={!data.career_id}
+                                    className={`w-full rounded-lg ${
+                                        errors.subject_id
+                                            ? 'border-red-400 focus:ring-red-200'
+                                            : 'border-slate-200'
+                                    }`}
+                                    disabled={!data.career_id || loadingSubjects}
                                     required
                                 >
                                     <option value="">
-                                        {data.career_id ? 'Selecciona una asignatura' : 'Primero selecciona una carrera'}
+                                        {!data.career_id
+                                            ? 'Primero selecciona una carrera'
+                                            : loadingSubjects
+                                                ? 'Cargando asignaturas...'
+                                                : subjects.length === 0
+                                                    ? 'No hay asignaturas disponibles'
+                                                    : 'Selecciona una asignatura'}
                                     </option>
-                                    {subjects.map((s) => (
-                                        <option key={s.id} value={s.id}>{s.code} — {s.name}</option>
+
+                                    {subjects.map((subject) => (
+                                        <option key={subject.id} value={String(subject.id)}>
+                                            {subject.code} — {subject.name}
+                                        </option>
                                     ))}
                                 </select>
                                 {errors.subject_id && <p className="mt-1 text-xs text-red-500">{errors.subject_id}</p>}

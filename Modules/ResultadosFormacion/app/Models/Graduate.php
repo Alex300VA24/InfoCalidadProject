@@ -51,4 +51,9 @@ class Graduate extends Model
     {
         return self::WORK_STATUSES[$this->work_status] ?? $this->work_status;
     }
+
+    public function getWorkStatusLabelAttribute(): string
+    {
+        return $this->workStatusLabel();
+    }
 }

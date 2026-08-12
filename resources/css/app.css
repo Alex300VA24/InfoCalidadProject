@@ -625,8 +625,20 @@ html.sidebar-open body {
 .page-heading__inner { max-width: 1440px; margin: 0 auto; padding: 22px 36px; }
 .page-heading h2 { color: #0f3d72; font-weight: 800; letter-spacing: -0.03em; }
 
-.page-content > div { padding: 32px 0; }
-.page-content .max-w-7xl { padding-left: 36px; padding-right: 36px; }
+.page-content > div {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 38px 36px 54px;
+}
+.page-content > div .max-w-3xl,
+.page-content > div .max-w-4xl,
+.page-content > div .max-w-5xl,
+.page-content > div .max-w-6xl,
+.page-content > div .max-w-7xl {
+    max-width: none;
+    padding-left: 0;
+    padding-right: 0;
+}
 .page-content .bg-white {
     border: 1px solid var(--nexo-line);
     border-radius: 18px;
@@ -1282,9 +1294,8 @@ html.sidebar-open body {
     .app-topbar { height: 66px; padding-inline: 15px; }
     .nexo-search { width: 44px; padding: 0; justify-content: center; }
     .nexo-search input, .nexo-search kbd { display: none; }
-    .page-content > div.nexo-dashboard { padding: 26px 16px 42px; }
+    .page-content > div { padding: 26px 16px 42px; }
     .page-heading__inner { padding-left: 16px; padding-right: 16px; }
-    .page-content .max-w-7xl { padding-left: 16px; padding-right: 16px; }
     .nexo-welcome { align-items: flex-start; flex-direction: column; gap: 18px; }
     .nexo-date { min-width: auto; padding: 12px; width: 100%; }
     .nexo-welcome p { font-size: 12px; line-height: 1.55; }
@@ -1309,8 +1320,186 @@ html.sidebar-open body {
 }
 
 /* ================================
+   WELCOME LANDING (PALETA WELCOME)
+   ================================ */
+.hero-grid {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+
+    background-size: 48px 48px;
+
+    mask-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.95),
+        rgba(0, 0, 0, 0.15)
+    );
+}
+
+.shine-effect {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.shine-effect::after {
+    content: '';
+    position: absolute;
+    top: -80%;
+    left: -130%;
+    z-index: 3;
+
+    width: 60%;
+    height: 260%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.28),
+        transparent
+    );
+
+    transform: rotate(22deg);
+    transition: left 850ms cubic-bezier(.22, 1, .36, 1);
+    pointer-events: none;
+}
+
+.shine-effect:hover::after {
+    left: 150%;
+}
+
+.module-card {
+    --module-color: 33, 136, 243;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    transition:
+        transform 420ms cubic-bezier(.22, 1, .36, 1),
+        box-shadow 420ms cubic-bezier(.22, 1, .36, 1),
+        border-color 420ms ease,
+        background-color 420ms ease;
+}
+
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: -130px;
+    right: -130px;
+    z-index: -1;
+
+    width: 240px;
+    height: 240px;
+
+    border-radius: 9999px;
+    background: rgba(var(--module-color), 0.13);
+    filter: blur(4px);
+
+    transform: scale(.75);
+    transition:
+        transform 500ms cubic-bezier(.22, 1, .36, 1),
+        opacity 500ms ease;
+}
+
+.module-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(var(--module-color), .11),
+            transparent 38%
+        );
+
+    transition: opacity 450ms ease;
+}
+
+.module-card:hover {
+    transform: translateY(-9px);
+    border-color: rgba(var(--module-color), .38);
+
+    box-shadow:
+        0 30px 70px -35px rgba(8, 38, 70, .45),
+        0 0 0 1px rgba(var(--module-color), .04);
+}
+
+.module-card:hover::before {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+.module-card:hover::after {
+    opacity: 1;
+}
+
+.module-card:focus-visible {
+    outline: 3px solid rgba(var(--module-color), .75);
+    outline-offset: 5px;
+}
+
+.module-card:hover .module-icon {
+    color: rgb(var(--module-color));
+    background: rgba(var(--module-color), .13);
+    transform: translateY(-3px) rotate(-3deg) scale(1.06);
+    box-shadow: 0 15px 35px -18px rgba(var(--module-color), .8);
+}
+
+.module-card:hover .module-arrow {
+    transform: translateX(5px);
+}
+
+.module-card:hover .module-link-text {
+    color: rgb(var(--module-color));
+}
+
+.module-card:hover .module-line {
+    width: 100%;
+}
+
+.module-icon {
+    transition:
+        transform 420ms cubic-bezier(.22, 1, .36, 1),
+        color 350ms ease,
+        background-color 350ms ease,
+        box-shadow 350ms ease;
+}
+
+.module-arrow {
+    transition: transform 350ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.module-link-text {
+    transition: color 300ms ease;
+}
+
+.module-line {
+    width: 0;
+    height: 2px;
+
+    background: rgb(var(--module-color));
+
+    transition: width 500ms cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ================================
    OVERLAY DE CARGA (TURBO)
    ================================ */
+@media (prefers-reduced-motion: reduce) {
+    .public-site *, .public-site *::before, .public-site *::after,
+    .public-auth *, .public-auth *::before, .public-auth *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 #app-loading-overlay {
     position: fixed;
     inset: 0;
@@ -1453,4 +1642,3 @@ html.sidebar-open body {
 #app-perf-badge.is-critical .dot { background: #dc2626; }
 #app-perf-badge .label { color: #c7d5de; }
 #app-perf-badge .ms { color: #fff; font-weight: 800; }
-

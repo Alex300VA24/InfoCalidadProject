@@ -49,4 +49,14 @@ class DegreeCommitteeAct extends Model
     {
         return self::RESULTS[$this->result] ?? $this->result;
     }
+
+    public function getActTypeLabelAttribute(): string
+    {
+        return $this->actTypeLabel();
+    }
+
+    public function getResultLabelAttribute(): string
+    {
+        return $this->resultLabel();
+    }
 }

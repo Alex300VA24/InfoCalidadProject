@@ -60,4 +60,14 @@ class DegreeApplication extends Model
     {
         return self::STATUSES[$this->status] ?? $this->status;
     }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
+    }
 }

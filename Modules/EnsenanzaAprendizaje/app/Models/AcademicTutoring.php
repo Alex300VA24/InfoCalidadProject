@@ -19,6 +19,12 @@ class AcademicTutoring extends Model
         'orientacion' => 'Orientación Vocacional',
     ];
 
+    public const STATUSES = [
+        'pendiente' => 'Pendiente',
+        'atendida' => 'Atendida',
+        'cancelada' => 'Cancelada',
+    ];
+
     protected $table = 'app_ensenanza_aprendizaje.academic_tutoring';
 
     protected $fillable = [
@@ -49,5 +55,15 @@ class AcademicTutoring extends Model
     public function typeLabel(): string
     {
         return self::TYPES[$this->type] ?? $this->type;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return self::STATUSES[$this->status] ?? $this->status;
     }
 }

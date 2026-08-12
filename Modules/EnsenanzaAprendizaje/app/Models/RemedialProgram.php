@@ -47,6 +47,11 @@ class RemedialProgram extends Model
         return self::STATUSES[$this->status] ?? $this->status;
     }
 
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
+    }
+
     public function isPending(): bool
     {
         return $this->status === 'pendiente';

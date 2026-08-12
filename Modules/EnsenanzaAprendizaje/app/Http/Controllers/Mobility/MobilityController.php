@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Mobility;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -25,12 +26,18 @@ class MobilityController extends Controller
             $query->where('status', $request->status);
         }
 
-        $applications = $query->latest('application_date')->paginate(15);
+        $applications = $query->latest('application_date')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $types = MobilityApplication::TYPES;
         $statuses = MobilityApplication::STATUSES;
 
-        return view('mobility.index', compact('applications', 'periods', 'types', 'statuses'));
+        return Inertia::render('Mobility/Index', [
+            'applications' => $applications,
+            'periods' => $periods,
+            'types' => $types,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'type', 'status']),
+        ]);
     }
 
     public function create()
@@ -41,7 +48,13 @@ class MobilityController extends Controller
         $statuses = MobilityApplication::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('mobility.create', compact('periods', 'students', 'types', 'statuses', 'defaultPeriod'));
+        return Inertia::render('Mobility/Create', [
+            'periods' => $periods,
+            'students' => $students,
+            'types' => $types,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreMobilityApplicationRequest $request)
@@ -56,7 +69,9 @@ class MobilityController extends Controller
     {
         $mobilityApplication->load(['student.user', 'academicPeriod']);
 
-        return view('mobility.show', compact('mobilityApplication'));
+        return Inertia::render('Mobility/Show', [
+            'mobilityApplication' => $mobilityApplication,
+        ]);
     }
 
     public function updateStatus(Request $request, MobilityApplication $mobilityApplication)
