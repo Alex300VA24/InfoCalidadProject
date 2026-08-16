@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Modules\Core\Database\Factories\UserFactory;
+use Modules\Core\Support\CatalogCache;
 
 #[Fillable(['name', 'email', 'password', 'career_id', 'role_id', 'dni', 'telefono', 'is_active', 'text_scale', 'view_scale'])]
 #[Hidden(['password', 'remember_token'])]
@@ -20,6 +21,12 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'core.users';
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => CatalogCache::forget());
+        static::deleted(fn () => CatalogCache::forget());
+    }
 
     protected function casts(): array
     {

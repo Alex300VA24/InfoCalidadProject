@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import { usePage, router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ConfirmModal from '../../components/Modal/ConfirmModal'
+import NativeModal, { prefetchModalPage } from '../../components/Modal/NativeModal'
 
 function formatKb(bytes) {
     const n = Number(bytes) ?? 0
@@ -31,8 +34,13 @@ const STATUS_FILTER_OPTIONS = [
     ['no', 'No visados'],
 ]
 
-export default function SyllabiIndex({ syllabi, periods, teachers, careers, filters }) {
+export default function SyllabiIndex({ syllabi = { data: [], links: [] }, periods = [], teachers = [], careers = [], filters = {} }) {
     const { can } = usePage().props
+    const [modal, setModal] = useState(null)
+    const [visaTarget, setVisaTarget] = useState(null)
+    const [visaProcessing, setVisaProcessing] = useState(false)
+
+    const closeModal = () => setModal(null)
 
     const applyFilter = (key, value) => {
         const params = { ...filters }
@@ -48,9 +56,14 @@ export default function SyllabiIndex({ syllabi, periods, teachers, careers, filt
         router.get('/syllabi', {}, { preserveState: true, preserveScroll: true, replace: true })
     }
 
-    const handleVisa = (e, syllabusId) => {
-        e.preventDefault()
-        router.post(`/syllabi/${syllabusId}/visa`, {}, { preserveScroll: true })
+    const handleVisa = () => {
+        if (!visaTarget) return
+        setVisaProcessing(true)
+        router.post(`/syllabi/${visaTarget.id}/visa`, {}, {
+            preserveScroll: true,
+            onSuccess: () => setVisaTarget(null),
+            onFinish: () => setVisaProcessing(false),
+        })
     }
 
     const hasFilters = Boolean(
@@ -69,13 +82,16 @@ export default function SyllabiIndex({ syllabi, periods, teachers, careers, filt
                         <p className="text-slate-500">Gestiona y valida el contenido académico de las carreras.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a
-                            href="/syllabi/create"
+                        <button
+                            type="button"
+                            onClick={() => setModal({ href: '/syllabi/create', title: 'Subir nuevo sílabo', size: 'wide' })}
+                            onMouseEnter={() => prefetchModalPage('/syllabi/create')}
+                            onFocus={() => prefetchModalPage('/syllabi/create')}
                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                         >
                             <span className="material-symbols-outlined text-lg">upload_file</span>
                             Subir Sílabo
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -213,14 +229,17 @@ export default function SyllabiIndex({ syllabi, periods, teachers, careers, filt
                                                 {diffForHumans(syllabus.created_at)}
                                             </span>
                                             <div className="flex gap-1">
-                                                <a
-                                                    href={`/syllabi/${syllabus.id}`}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setModal({ href: `/syllabi/${syllabus.id}`, title: `Sílabo ${syllabus.subject?.code ?? `#${syllabus.id}`}`, size: 'wide' })}
+                                                    onMouseEnter={() => prefetchModalPage(`/syllabi/${syllabus.id}`)}
+                                                    onFocus={() => prefetchModalPage(`/syllabi/${syllabus.id}`)}
                                                     title="Ver detalle"
                                                     aria-label={`Ver detalle del sílabo ${syllabus.id}`}
                                                     className="text-navy hover:bg-navy/5 p-1 rounded transition-colors"
                                                 >
                                                     <span className="material-symbols-outlined text-lg">visibility</span>
-                                                </a>
+                                                </button>
                                                 <a
                                                     href={`/syllabi/${syllabus.id}/download`}
                                                     title="Descargar"
@@ -230,19 +249,17 @@ export default function SyllabiIndex({ syllabi, periods, teachers, careers, filt
                                                     <span className="material-symbols-outlined text-lg">download</span>
                                                 </a>
                                                 {!isVisado && can.syllabi && (
-                                                    <form
-                                                        onSubmit={(e) => handleVisa(e, syllabus.id)}
-                                                        className="inline"
-                                                    >
+                                                    <div className="inline">
                                                         <button
-                                                            type="submit"
+                                                            type="button"
+                                                            onClick={() => setVisaTarget(syllabus)}
                                                             title="Marcar como visado"
                                                             aria-label={`Marcar sílabo ${syllabus.id} como visado`}
                                                             className="text-emerald-600 hover:bg-emerald-50 p-1 rounded transition-colors"
                                                         >
                                                             <span className="material-symbols-outlined text-lg">verified</span>
                                                         </button>
-                                                    </form>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
@@ -267,6 +284,24 @@ export default function SyllabiIndex({ syllabi, periods, teachers, careers, filt
                     <Pagination links={syllabi.links} />
                 </div>
             </div>
+            <NativeModal
+                open={Boolean(modal)}
+                href={modal?.href ?? ''}
+                title={modal?.title ?? ''}
+                size={modal?.size}
+                onClose={closeModal}
+                exitPaths={['/syllabi']}
+            />
+            <ConfirmModal
+                open={Boolean(visaTarget)}
+                title="Confirmar visado"
+                message={`Se registrará como visado el sílabo de ${visaTarget?.subject?.name ?? 'la asignatura seleccionada'}. Esta acción es irreversible.`}
+                confirmLabel="Visar sílabo"
+                tone="success"
+                processing={visaProcessing}
+                onConfirm={handleVisa}
+                onCancel={() => setVisaTarget(null)}
+            />
         </div>
     )
 }

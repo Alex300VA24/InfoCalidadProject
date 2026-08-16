@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -47,10 +48,10 @@ export default function DegreeApplicationsIndex({ applications, types, statuses,
                         <p className="text-slate-500">Expedientes de grado de bachiller y título profesional.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a href="/degrees/applications/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                        <ModalLink href="/degrees/applications/create" title="Nuevo expediente" context="Grados y Títulos" icon="note_add" returnPath="/degrees/applications" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                             <span className="material-symbols-outlined text-lg">note_add</span>
                             Nuevo Expediente
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 
@@ -113,9 +114,9 @@ export default function DegreeApplicationsIndex({ applications, types, statuses,
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <a href={`/degrees/applications/${application.id}`} title="Ver detalle" aria-label="Ver detalle del expediente" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                            <ModalLink href={`/degrees/applications/${application.id}`} title="Detalle del expediente" context="Grados y Títulos" icon="description" returnPath="/degrees/applications" aria-label="Ver detalle del expediente" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
-                                            </a>
+                                            </ModalLink>
                                         </td>
                                     </tr>
                                 )) : (

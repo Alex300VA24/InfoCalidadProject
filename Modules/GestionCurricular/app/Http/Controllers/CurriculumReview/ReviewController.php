@@ -8,8 +8,8 @@ use Modules\GestionCurricular\Http\Requests\StoreCurriculumReviewRequest;
 use Modules\GestionCurricular\Http\Requests\CompleteReviewRequest;
 use Modules\GestionCurricular\Models\CurriculumReview;
 use Modules\GestionCurricular\Models\ChecklistTemplate;
-use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
+use Modules\Core\Support\CatalogCache;
 use Modules\GestionCurricular\Models\ActionType;
 use Illuminate\Http\Request;
 
@@ -30,9 +30,9 @@ class ReviewController extends Controller
     public function create()
     {
         $templates = ChecklistTemplate::where('is_active', true)->get();
-        $periods = AcademicPeriod::all();
-        $careers = Career::where('is_active', true)->orderBy('code')->get();
-        $defaultCareer = Career::resolveDefault(request()->user());
+        $periods = CatalogCache::periods();
+        $careers = CatalogCache::activeCareers();
+        $defaultCareer = Career::resolveDefault(request()->user()?->loadMissing('career'));
 
         return Inertia::render('Curriculum/Reviews/Create', [
             'templates' => $templates,
@@ -44,7 +44,7 @@ class ReviewController extends Controller
 
     public function store(StoreCurriculumReviewRequest $request)
     {
-        $defaultCareer = Career::resolveDefault($request->user());
+        $defaultCareer = Career::resolveDefault($request->user()?->loadMissing('career'));
 
         $review = CurriculumReview::create([
             'checklist_template_id' => $request->checklist_template_id,

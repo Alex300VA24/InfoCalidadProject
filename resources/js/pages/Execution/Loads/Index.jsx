@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 export default function LoadsIndex({ loads, periods, teachers, filters }) {
     const query = (extra = {}) => {
@@ -35,10 +36,10 @@ export default function LoadsIndex({ loads, periods, teachers, filters }) {
                     <p className="text-slate-500">Registro de cargas asignadas por periodo y docente.</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                    <a href="/execution/loads/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <ModalLink href="/execution/loads/create" title="Registrar carga académica" context="Ejecución del Plan Curricular" icon="assignment_ind" returnPath="/execution/loads" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                         <span className="material-symbols-outlined text-lg">add</span>
                         Registrar Carga
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 

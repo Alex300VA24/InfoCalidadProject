@@ -1,4 +1,5 @@
 import AppLayout from '../../layouts/AppLayout'
+import ModalLink from '../../components/Modal/ModalLink'
 import Pagination from '../../components/Pagination'
 
 const formatDate = (value) => {
@@ -17,10 +18,10 @@ export default function CommitteeActsIndex({ degreeApplication, acts }) {
                         <p className="text-slate-500">{degreeApplication.code} — {degreeApplication.student?.user?.name ?? degreeApplication.student?.codigo}</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a href={`/degrees/applications/${degreeApplication.id}/acts/create`} className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                        <ModalLink href={`/degrees/applications/${degreeApplication.id}/acts/create`} title="Registrar acta de comité" context="Grados y Títulos" icon="edit_note" returnPath={`/degrees/applications/${degreeApplication.id}/acts`} className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                             <span className="material-symbols-outlined text-lg">edit_note</span>
                             Registrar Acta
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 

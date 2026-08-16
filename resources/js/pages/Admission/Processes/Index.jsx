@@ -1,5 +1,6 @@
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 const STATUS_STYLES = {
     abierto: 'text-emerald-700 bg-emerald-100 border-emerald-200',
@@ -41,13 +42,17 @@ export default function AdmissionProcessesIndex({ processes }) {
                         <p className="text-slate-500">Administra las convocatorias, vacantes y resultados de postulantes.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a
+                        <ModalLink
                             href="/admission/processes/create"
+                            title="Nueva convocatoria de admisión"
+                            context="Gestión del Ingreso"
+                            icon="campaign"
+                            returnPath="/admission/processes"
                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                         >
                             <span className="material-symbols-outlined text-lg">add</span>
                             Nueva Convocatoria
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 
@@ -73,9 +78,9 @@ export default function AdmissionProcessesIndex({ processes }) {
                                     return (
                                         <tr key={process.id} className="hover:bg-slate-50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <a href={`/admission/processes/${process.id}`} className="font-bold text-navy hover:underline">
+                                                <ModalLink href={`/admission/processes/${process.id}`} title={`Convocatoria ${process.name}`} context="Gestión del Ingreso" icon="campaign" returnPath="/admission/processes" className="font-bold text-navy hover:underline">
                                                     {process.name}
-                                                </a>
+                                                </ModalLink>
                                                 <div className="text-xs text-slate-400">{process.modality}</div>
                                             </td>
                                             <td className="px-6 py-4 text-slate-500">{process.academic_period?.name}</td>
@@ -103,20 +108,28 @@ export default function AdmissionProcessesIndex({ processes }) {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
-                                                <a
+                                                <ModalLink
                                                     href={`/admission/processes/${process.id}`}
+                                                    title={`Convocatoria ${process.name}`}
+                                                    context="Gestión del Ingreso"
+                                                    icon="visibility"
+                                                    returnPath="/admission/processes"
                                                     className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy"
                                                     title="Ver"
                                                 >
                                                     <span className="material-symbols-outlined text-lg">visibility</span>
-                                                </a>
-                                                <a
+                                                </ModalLink>
+                                                <ModalLink
                                                     href={`/admission/processes/${process.id}/edit`}
+                                                    title={`Editar ${process.name}`}
+                                                    context="Gestión del Ingreso"
+                                                    icon="edit"
+                                                    returnPath="/admission/processes"
                                                     className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy"
                                                     title="Editar"
                                                 >
                                                     <span className="material-symbols-outlined text-lg">edit</span>
-                                                </a>
+                                                </ModalLink>
                                             </td>
                                         </tr>
                                     )

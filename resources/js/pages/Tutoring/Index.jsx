@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -45,10 +46,10 @@ export default function TutoringIndex({ tutorings, periods, statuses, filters })
                     <h2 className="text-3xl font-bold text-navy mt-2">Tutoría Académica</h2>
                     <p className="text-slate-500">Acompañamiento, nivelación de competencias y orientación estudiantil.</p>
                 </div>
-                <a href="/tutoring/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/tutoring/create" title="Nueva tutoría" context="Tutoría Académica" icon="support_agent" returnPath="/tutoring" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">support_agent</span>
                     Nueva Tutoría
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">
@@ -110,9 +111,9 @@ export default function TutoringIndex({ tutorings, periods, statuses, filters })
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a href={`/tutoring/${tutoring.id}`} title="Ver detalle" aria-label="Ver detalle de la tutoría" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <ModalLink href={`/tutoring/${tutoring.id}`} title="Detalle de tutoría" context="Tutoría Académica" icon="support_agent" returnPath="/tutoring" aria-label="Ver detalle de la tutoría" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span className="material-symbols-outlined text-lg">visibility</span>
-                                        </a>
+                                        </ModalLink>
                                     </td>
                                 </tr>
                             )) : (

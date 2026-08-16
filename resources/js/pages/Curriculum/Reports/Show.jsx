@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
+import ConfirmModal from '../../../components/Modal/ConfirmModal'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -26,11 +28,16 @@ const formatDateTime = (value) => {
 }
 
 export default function CurriculumReportsShow({ report }) {
-    const handleFinalize = (e) => {
-        e.preventDefault()
-        if (window.confirm('¿Finalizar y enviar para aprobación?')) {
-            router.post(`/curriculum/reports/${report.id}/finalize`, {}, { preserveScroll: true })
-        }
+    const [confirmingFinalize, setConfirmingFinalize] = useState(false)
+    const [processingFinalize, setProcessingFinalize] = useState(false)
+
+    const handleFinalize = () => {
+        setProcessingFinalize(true)
+        router.post(`/curriculum/reports/${report.id}/finalize`, {}, {
+            preserveScroll: true,
+            onSuccess: () => setConfirmingFinalize(false),
+            onFinish: () => setProcessingFinalize(false),
+        })
     }
 
     return (
@@ -52,14 +59,15 @@ export default function CurriculumReportsShow({ report }) {
                                 >
                                     Editar
                                 </a>
-                                <form onSubmit={handleFinalize} className="inline">
+                                <div className="inline">
                                     <button
-                                        type="submit"
+                                        type="button"
+                                        onClick={() => setConfirmingFinalize(true)}
                                         className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md text-sm font-semibold hover:bg-green-500"
                                     >
                                         Finalizar y Enviar
                                     </button>
-                                </form>
+                                </div>
                             </>
                         )}
                         <a
@@ -147,6 +155,16 @@ export default function CurriculumReportsShow({ report }) {
                     </div>
                 </div>
             </div>
+            <ConfirmModal
+                open={confirmingFinalize}
+                title="Finalizar informe técnico"
+                message="El informe quedará bloqueado para edición y será enviado al Director de Escuela para su aprobación."
+                confirmLabel="Finalizar y enviar"
+                tone="success"
+                processing={processingFinalize}
+                onConfirm={handleFinalize}
+                onCancel={() => setConfirmingFinalize(false)}
+            />
         </div>
     )
 }

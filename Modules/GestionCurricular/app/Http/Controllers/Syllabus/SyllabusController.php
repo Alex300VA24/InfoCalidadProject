@@ -8,7 +8,7 @@ use Modules\GestionCurricular\Models\Syllabus;
 use Modules\Core\Models\Subject;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
-use Modules\Core\Models\User;
+use Modules\Core\Support\CatalogCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -36,10 +36,9 @@ class SyllabusController extends Controller
         }
 
         $syllabi = $query->latest()->paginate(15)->withQueryString();
-        $periods = AcademicPeriod::all(['id', 'name']);
-        $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
-        $careers = Career::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name']);
-        $defaultCareer = Career::resolveDefault($request->user());
+        $periods = CatalogCache::periods();
+        $teachers = CatalogCache::teachers();
+        $careers = CatalogCache::activeCareers();
         $filters = $request->only([
             'career_id', 'subject_id', 'academic_period_id', 'teacher_id', 'is_visado',
         ]);
@@ -49,10 +48,10 @@ class SyllabusController extends Controller
 
     public function create(Request $request)
     {
-        $periods = AcademicPeriod::all(['id', 'name']);
-        $teachers = User::withRole('docente')->orderBy('name')->get(['id', 'name']);
-        $careers = Career::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name']);
-        $defaultCareer = Career::resolveDefault($request->user());
+        $periods = CatalogCache::periods();
+        $teachers = CatalogCache::teachers();
+        $careers = CatalogCache::activeCareers();
+        $defaultCareer = Career::resolveDefault($request->user()?->loadMissing('career'));
         $defaultCareerId = $request->filled('career_id')
             ? $request->career_id
             : ($defaultCareer?->id);
@@ -68,7 +67,7 @@ class SyllabusController extends Controller
         $file = $request->file('file');
         $period = AcademicPeriod::find($request->academic_period_id);
         $path = $file->store("syllabi/{$period->name}", 'public');
-        $defaultCareer = Career::resolveDefault($request->user());
+        $defaultCareer = Career::resolveDefault($request->user()?->loadMissing('career'));
 
         Syllabus::create([
             'career_id' => $request->career_id ?? $defaultCareer->id,
@@ -119,7 +118,7 @@ class SyllabusController extends Controller
 
     public function getSubjects()
     {
-        $defaultCareer = Career::resolveDefault(request()->user());
+        $defaultCareer = Career::resolveDefault(request()->user()?->loadMissing('career'));
 
         if (request()->filled('career_id')) {
             $defaultCareer = Career::find(request('career_id')) ?? $defaultCareer;

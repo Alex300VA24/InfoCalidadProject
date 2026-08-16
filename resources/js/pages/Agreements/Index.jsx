@@ -1,6 +1,8 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
+import Breadcrumbs from '../../components/Breadcrumbs'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -39,6 +41,14 @@ export default function AgreementsIndex({ agreements, types, statuses, filters }
 
     return (
         <div className="page-enter">
+            <Breadcrumbs
+                backHref="/mobility"
+                items={[
+                    { label: 'Movilidad y Becas', href: '/mobility' },
+                    { label: 'Convenios' },
+                ]}
+            />
+
             <div className="flex flex-wrap justify-between items-end gap-3 mb-6">
                 <div>
                     <span className="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">Movilidad Académica y Becas</span>
@@ -50,10 +60,10 @@ export default function AgreementsIndex({ agreements, types, statuses, filters }
                         <span className="material-symbols-outlined text-lg">flight_takeoff</span>
                         Solicitudes
                     </a>
-                    <a href="/mobility/agreements/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <ModalLink href="/mobility/agreements/create" title="Registrar convenio" context="Movilidad Académica" icon="handshake" returnPath="/mobility/agreements" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                         <span className="material-symbols-outlined text-lg">handshake</span>
                         Nuevo Convenio
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 

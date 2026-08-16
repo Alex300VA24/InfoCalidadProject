@@ -1,4 +1,13 @@
-import { Link, usePage } from '@inertiajs/react'
+import { useEffect, useState } from 'react'
+import { Link, router, usePage } from '@inertiajs/react'
+import ConfirmModal from './Modal/ConfirmModal'
+
+const SECTION_ICONS = {
+    'Gestión Curricular': 'menu_book',
+    'Gestión del Ingreso': 'how_to_reg',
+    'Enseñanza y Aprendizaje': 'cast_for_education',
+    'Resultados de la Formación': 'emoji_events',
+}
 
 const SECTIONS = [
     {
@@ -9,7 +18,6 @@ const SECTIONS = [
                 icon: 'dashboard',
                 href: '/dashboard',
                 match: ['/dashboard'],
-                indicator: true,
             },
         ],
     },
@@ -95,7 +103,7 @@ const SECTIONS = [
                 icon: 'task_alt',
                 href: '/evaluations',
                 gate: 'evaluations',
-                match: ['/evaluations'],
+                match: ['/evaluations', '/evaluations/record'],
                 exclude: ['/evaluations/actas'],
             },
             {
@@ -160,14 +168,7 @@ const SECTIONS = [
                 icon: 'public',
                 href: '/mobility',
                 gate: 'mobility',
-                match: ['/mobility'],
-            },
-            {
-                label: 'Convenios',
-                icon: 'handshake',
-                href: '/mobility/agreements',
-                gate: 'mobility',
-                match: ['/mobility/agreements'],
+                match: ['/mobility', '/mobility/agreements'],
             },
             {
                 label: 'Investigación',
@@ -209,6 +210,18 @@ const SECTIONS = [
 export default function Sidebar({ collapsed, open, onOpenChange }) {
     const { props, url } = usePage()
     const can = (ability) => Boolean(props.can?.[ability])
+    const [logoutOpen, setLogoutOpen] = useState(false)
+    const [loggingOut, setLoggingOut] = useState(false)
+
+    const handleLogout = () => {
+        setLoggingOut(true)
+        router.post('/logout', {}, {
+            onFinish: () => {
+                setLoggingOut(false)
+                setLogoutOpen(false)
+            },
+        })
+    }
 
     const path = url.split('?')[0]
 
@@ -225,6 +238,23 @@ export default function Sidebar({ collapsed, open, onOpenChange }) {
         items: section.items.filter((item) => !item.gate || can(item.gate)),
     })).filter((section) => section.items.length > 0)
 
+    const activeSection = sections.find((section) => section.items.some((item) => isActive(item.match, item.exclude)))?.label
+    const [expandedSection, setExpandedSection] = useState(() => {
+        if (typeof window === 'undefined') return activeSection ?? 'Principal'
+        return activeSection ?? window.sessionStorage.getItem('sidebar-section') ?? 'Principal'
+    })
+
+    useEffect(() => {
+        if (activeSection) setExpandedSection(activeSection)
+    }, [activeSection])
+
+    const toggleSection = (label) => {
+        if (label === 'Principal') return
+        const next = expandedSection === label ? null : label
+        setExpandedSection(next)
+        if (next) window.sessionStorage.setItem('sidebar-section', next)
+    }
+
     return (
         <aside
             className={`app-sidebar group/sidebar ${open ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`}
@@ -233,7 +263,7 @@ export default function Sidebar({ collapsed, open, onOpenChange }) {
             <div className="sidebar-glow sidebar-glow--top"></div>
             <div className="sidebar-glow sidebar-glow--bottom"></div>
 
-            <div className="sidebar-inner relative w-full h-full overflow-hidden">
+            <div className="sidebar-inner relative flex h-full w-full flex-col overflow-hidden">
                 <div className="sidebar-brand-wrap shrink-0 px-4 pb-5 pt-5">
                     <Link href="/dashboard" className="sidebar-brand group">
                         <img
@@ -254,12 +284,32 @@ export default function Sidebar({ collapsed, open, onOpenChange }) {
                 </div>
 
                 <nav className="sidebar-nav flex-1 overflow-y-auto px-3" aria-label="Navegación principal">
-                    {sections.map((section, index) => (
-                        <div key={section.label}>
-                            <p className={`sidebar-section-label ${index > 0 ? 'mt-6' : ''}`}>
-                                {section.label}
-                            </p>
+                    {sections.map((section, index) => {
+                        const expanded = section.label === 'Principal' || expandedSection === section.label
+                        const panelId = `sidebar-section-${index}`
 
+                        return (
+                        <section key={section.label} className={`sidebar-section ${index > 0 ? 'mt-2' : ''}`}>
+                            <button
+                                type="button"
+                                className="sidebar-section-label"
+                                aria-expanded={expanded}
+                                aria-controls={panelId}
+                                onClick={() => toggleSection(section.label)}
+                                title={collapsed ? section.label : undefined}
+                            >
+                                <span className="sidebar-section-label__text">
+                                    {section.label !== 'Principal' && (
+                                        <span className="material-symbols-outlined sidebar-section-label__icon" aria-hidden="true">
+                                            {SECTION_ICONS[section.label]}
+                                        </span>
+                                    )}
+                                    <span>{section.label}</span>
+                                </span>
+                                {section.label !== 'Principal' && <span className="material-symbols-outlined" aria-hidden="true">expand_more</span>}
+                            </button>
+
+                            <div id={panelId} className={`sidebar-section__items ${expanded ? 'is-expanded' : ''}`} hidden={!expanded}>
                             {section.items.map((item) => {
                                 const active = isActive(item.match, item.exclude)
 
@@ -268,6 +318,10 @@ export default function Sidebar({ collapsed, open, onOpenChange }) {
                                         key={item.href}
                                         href={item.href}
                                         className={`sidebar-link ${active ? 'is-active' : ''}`}
+                                        aria-current={active ? 'page' : undefined}
+                                        prefetch="hover"
+                                        cacheFor="30s"
+                                        title={collapsed ? item.label : undefined}
                                         onClick={() => onOpenChange(false)}
                                     >
                                         <span className="sidebar-link__icon">
@@ -276,32 +330,43 @@ export default function Sidebar({ collapsed, open, onOpenChange }) {
 
                                         <span className="sidebar-link__text">{item.label}</span>
 
-                                        {item.indicator && active && (
+                                        {active && (
                                             <span className="sidebar-link__indicator"></span>
                                         )}
                                     </Link>
                                 )
                             })}
-                        </div>
-                    ))}
+                            </div>
+                        </section>
+                        )
+                    })}
                 </nav>
 
                 <div className="sidebar-footer relative shrink-0 border-t border-white/[0.07] p-3">
-                    <Link
-                        href="/logout"
-                        method="post"
-                        as="button"
+                    <button
                         type="button"
                         className="sidebar-link sidebar-link--logout w-full"
+                        onClick={() => setLogoutOpen(true)}
                     >
                         <span className="sidebar-link__icon">
                             <span className="material-symbols-outlined">logout</span>
                         </span>
 
                         <span className="sidebar-link__text">Cerrar sesión</span>
-                    </Link>
+                    </button>
                 </div>
             </div>
+
+            <ConfirmModal
+                open={logoutOpen}
+                title="¿Cerrar sesión?"
+                message="Se cerrará tu sesión actual y deberás iniciar sesión nuevamente para continuar."
+                confirmLabel="Cerrar sesión"
+                tone="primary"
+                processing={loggingOut}
+                onConfirm={handleLogout}
+                onCancel={() => setLogoutOpen(false)}
+            />
         </aside>
     )
 }

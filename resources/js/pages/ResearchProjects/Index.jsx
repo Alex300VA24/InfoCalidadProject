@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -47,10 +48,10 @@ export default function ResearchProjectsIndex({ projects, periods, statuses, fil
                     <h2 className="text-3xl font-bold text-navy mt-2">Proyectos de Investigación</h2>
                     <p className="text-slate-500">Seguimiento de proyectos, líneas de investigación y producción académica.</p>
                 </div>
-                <a href="/research/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/research/create" title="Nuevo proyecto de investigación" context="Investigación" icon="science" returnPath="/research" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">science</span>
                     Nuevo Proyecto
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">
@@ -118,9 +119,9 @@ export default function ResearchProjectsIndex({ projects, periods, statuses, fil
                                         <a href={`/research/${project.id}/download`} title="Descargar documento" aria-label="Descargar documento del proyecto" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span className="material-symbols-outlined text-lg">download</span>
                                         </a>
-                                        <a href={`/research/${project.id}`} title="Ver detalle" aria-label="Ver detalle del proyecto" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <ModalLink href={`/research/${project.id}`} title="Detalle del proyecto" context="Investigación" icon="science" returnPath="/research" aria-label="Ver detalle del proyecto" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span className="material-symbols-outlined text-lg">visibility</span>
-                                        </a>
+                                        </ModalLink>
                                     </td>
                                 </tr>
                             )) : (

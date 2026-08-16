@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -52,10 +53,10 @@ export default function MobilityIndex({ applications, periods, types, statuses, 
                         <span className="material-symbols-outlined text-lg">handshake</span>
                         Convenios
                     </a>
-                    <a href="/mobility/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <ModalLink href="/mobility/create" title="Nueva solicitud de movilidad" context="Movilidad Académica" icon="flight_takeoff" returnPath="/mobility" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                         <span className="material-symbols-outlined text-lg">flight_takeoff</span>
                         Nueva Solicitud
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 
@@ -124,9 +125,9 @@ export default function MobilityIndex({ applications, periods, types, statuses, 
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a href={`/mobility/${application.id}`} title="Ver detalle" aria-label="Ver detalle de la solicitud" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <ModalLink href={`/mobility/${application.id}`} title="Detalle de solicitud de movilidad" context="Movilidad Académica" icon="flight_takeoff" returnPath="/mobility" aria-label="Ver detalle de la solicitud" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span className="material-symbols-outlined text-lg">visibility</span>
-                                        </a>
+                                        </ModalLink>
                                     </td>
                                 </tr>
                             )) : (

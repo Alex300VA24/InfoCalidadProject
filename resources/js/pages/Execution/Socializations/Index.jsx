@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 export default function SocializationsIndex({ socializations, users, subjects, filters }) {
     const query = (extra = {}) => {
@@ -34,10 +35,10 @@ export default function SocializationsIndex({ socializations, users, subjects, f
                     <h2 className="text-3xl font-bold text-navy mt-2">Socialización de Sílabos</h2>
                     <p className="text-slate-500">Registro de socialización de sílabos por asignatura y carrera.</p>
                 </div>
-                <a href="/execution/socializations/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/execution/socializations/create" title="Registrar socialización de sílabo" context="Ejecución del Plan Curricular" icon="school" returnPath="/execution/socializations" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">school</span>
                     Registrar Socialización
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">

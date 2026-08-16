@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Http\Middleware\HandleInertiaRequests;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
 use Modules\Core\Models\Role;
@@ -94,6 +95,21 @@ class SmokeNewPagesTest extends TestCase
         foreach ($urls as $url) {
             $this->get($url)->assertStatus(200);
         }
+    }
+
+    public function test_native_modal_request_returns_an_inertia_page_payload(): void
+    {
+        $this->actingAs($this->user);
+
+        $this->get('/graduates/create', [
+            'X-Inertia' => 'true',
+            'X-Inertia-Version' => app(HandleInertiaRequests::class)->version(request()),
+            'X-Requested-With' => 'XMLHttpRequest',
+            'Accept' => 'text/html, application/xhtml+xml',
+        ])->assertOk()
+            ->assertHeader('X-Inertia', 'true')
+            ->assertJsonPath('component', 'Graduates/Create')
+            ->assertJsonStructure(['component', 'props', 'url', 'version']);
     }
 
     public function test_evaluations_pages_use_inertia(): void

@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const STATUS_STYLES = {
     matriculado: 'text-emerald-700 bg-emerald-100 border-emerald-200',
@@ -59,13 +60,17 @@ export default function EnrollmentIndex({ enrollments, periods, careers, filters
                         <span className="material-symbols-outlined text-lg">groups</span>
                         Padrón Virtual
                     </a>
-                    <a
+                    <ModalLink
                         href="/enrollment/create"
+                        title="Registrar matrícula"
+                        context="Gestión de Matrícula"
+                        icon="how_to_reg"
+                        returnPath="/enrollment"
                         className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                     >
                         <span className="material-symbols-outlined text-lg">how_to_reg</span>
                         Nueva Matrícula
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 
@@ -169,14 +174,18 @@ export default function EnrollmentIndex({ enrollments, periods, careers, filters
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a
+                                        <ModalLink
                                             href={`/enrollment/${enrollment.id}`}
+                                            title="Detalle de matrícula"
+                                            context="Gestión de Matrícula"
+                                            icon="how_to_reg"
+                                            returnPath="/enrollment"
                                             title="Ver detalle"
                                             aria-label={`Ver detalle de la matrícula ${enrollment.code}`}
                                             className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy"
                                         >
                                             <span className="material-symbols-outlined text-lg">visibility</span>
-                                        </a>
+                                        </ModalLink>
                                     </td>
                                 </tr>
                             ))}

@@ -13,6 +13,12 @@ const benefits = [
     ['groups', 'Trabajo coordinado', 'Un lenguaje común para docentes, estudiantes, responsables y evaluadores.'],
 ]
 
+const previewMetrics = [
+    ['Cobertura de vacantes', '92%', 'trending_up'],
+    ['Tasa de matrícula', '86%', 'how_to_reg'],
+    ['Procesos conectados', '4 áreas', 'hub'],
+]
+
 export default function Welcome() {
     const { auth } = usePage().props
     const accessHref = auth?.user ? '/dashboard' : '/login'
@@ -24,7 +30,7 @@ export default function Welcome() {
 
             <header className="sticky top-0 z-50 border-b border-white/10 bg-ink-950/95 shadow-[0_12px_40px_-24px_rgba(8,26,35,.8)]">
                 <nav className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-5 px-5 sm:px-8" aria-label="Navegación principal">
-                    <Link href="/" className="flex min-w-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300">
+                    <Link href="/" className="flex min-h-11 min-w-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300">
                         <img src="/static/img/logo_informatica.png" alt="Facultad de Ingeniería Informática" className="h-10 w-10 rounded-xl object-cover" />
                         <span className="min-w-0">
                             <strong className="block truncate text-sm font-extrabold tracking-wide text-white">UNT · Ingeniería Informática</strong>
@@ -64,12 +70,16 @@ export default function Welcome() {
                                 <a href="#areas" className="inline-flex min-h-12 items-center rounded-xl border border-white/20 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-200">Conocer la plataforma</a>
                             </div>
                         </div>
-                        <div className="relative mx-auto w-full max-w-md lg:justify-self-end">
-                            <div className="rounded-2xl bg-white p-7 text-ink-950 shadow-[0_35px_90px_-38px_rgba(0,0,0,.75)] sm:p-9">
-                                <span className="material-symbols-outlined text-[36px] text-brand-600">verified_user</span>
-                                <h2 className="mt-5 text-2xl font-black tracking-[-0.025em]">Una plataforma, un propósito común</h2>
-                                <p className="mt-4 text-sm leading-7 text-ink-600">Transformar información académica en seguimiento útil, coordinación y decisiones orientadas a la mejora continua.</p>
-                                <div className="mt-7 border-t border-ink-100 pt-6 text-sm font-bold text-brand-800">Acceso seguro · Gestión integrada · Mejora continua</div>
+                        <div className="landing-preview relative mx-auto w-full max-w-lg lg:justify-self-end" aria-label="Vista previa del centro de control académico">
+                            <div className="landing-preview__window">
+                                <div className="landing-preview__bar"><span></span><span></span><span></span><strong>Centro de Control Académico</strong></div>
+                                <div className="landing-preview__body">
+                                    <div className="landing-preview__status"><span className="material-symbols-outlined">verified</span><div><small>Estado institucional</small><strong>Operación académica estable</strong></div></div>
+                                    <div className="landing-preview__metrics">
+                                        {previewMetrics.map(([label, value, icon]) => <article key={label}><span className="material-symbols-outlined">{icon}</span><strong>{value}</strong><small>{label}</small></article>)}
+                                    </div>
+                                    <div className="landing-preview__chart"><div><strong>Seguimiento del periodo</strong><small>Indicadores consolidados</small></div><span style={{ '--preview-value': '88%' }}></span><span style={{ '--preview-value': '72%' }}></span><span style={{ '--preview-value': '94%' }}></span></div>
+                                </div>
                             </div>
                         </div>
                     </div>

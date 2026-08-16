@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 const STATUS_STYLES = {
     ingresante: 'text-emerald-700 bg-emerald-100 border-emerald-200',
@@ -53,13 +54,17 @@ export default function ApplicantsIndex({ applicants, processes, careers, filter
                         <p className="text-slate-500">Registro y resultados de postulantes por convocatoria.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a
+                        <ModalLink
                             href="/admission/applicants/create"
+                            title="Registrar postulante"
+                            context="Gestión del Ingreso"
+                            icon="person_add"
+                            returnPath="/admission/applicants"
                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                         >
                             <span className="material-symbols-outlined text-lg">person_add</span>
                             Registrar Postulante
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 
@@ -165,14 +170,18 @@ export default function ApplicantsIndex({ applicants, processes, careers, filter
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <a
+                                            <ModalLink
                                                 href={`/admission/applicants/${applicant.id}`}
+                                                title={`Postulante ${fullName(applicant)}`}
+                                                context="Gestión del Ingreso"
+                                                icon="person"
+                                                returnPath="/admission/applicants"
                                                 title="Ver detalle"
                                                 aria-label={`Ver detalle del postulante ${applicant.dni}`}
                                                 className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy"
                                             >
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
-                                            </a>
+                                            </ModalLink>
                                         </td>
                                     </tr>
                                 ))}

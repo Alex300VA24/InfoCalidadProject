@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -56,10 +57,10 @@ export default function GraduatesIndex({ graduates, workStatuses, filters }) {
                             <span className="material-symbols-outlined text-lg">monitoring</span>
                             Estadísticas
                         </a>
-                        <a href="/graduates/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                        <ModalLink href="/graduates/create" title="Registrar egresado" context="Resultados de la Formación" icon="person_add" returnPath="/graduates" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                             <span className="material-symbols-outlined text-lg">person_add</span>
                             Registrar Egresado
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 
@@ -116,9 +117,12 @@ export default function GraduatesIndex({ graduates, workStatuses, filters }) {
                                         <td className="px-6 py-4 text-slate-500">{formatCurrency(graduate.monthly_income)}</td>
                                         <td className="px-6 py-4 text-slate-500">{formatDate(graduate.survey_date)}</td>
                                         <td className="px-6 py-4 text-right">
-                                            <a href={`/graduates/${graduate.id}`} title="Ver detalle" aria-label="Ver detalle del egresado" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                            <ModalLink href={`/graduates/${graduate.id}`} title="Detalle del egresado" context="Resultados de la Formación" icon="person" returnPath="/graduates" aria-label="Ver detalle del egresado" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
-                                            </a>
+                                            </ModalLink>
+                                            <ModalLink href={`/graduates/${graduate.id}/edit`} title="Editar egresado" context="Resultados de la Formación" icon="edit" returnPath="/graduates" aria-label="Editar egresado" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                                <span className="material-symbols-outlined text-lg">edit</span>
+                                            </ModalLink>
                                         </td>
                                     </tr>
                                 )) : (

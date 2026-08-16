@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 export default function RemedialProgramsIndex({ programs, periods, statuses, filters }) {
     const [updatingId, setUpdatingId] = useState(null)
@@ -53,10 +54,10 @@ export default function RemedialProgramsIndex({ programs, periods, statuses, fil
                     <h2 className="text-3xl font-bold text-navy mt-2">Nivelación y Recuperación</h2>
                     <p className="text-slate-500">Programas de nivelación y recuperación académica.</p>
                 </div>
-                <a href="/tutoring/remedial/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/tutoring/remedial/create" title="Registrar programa de nivelación" context="Tutoría Académica" icon="school" returnPath="/tutoring/remedial" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">add</span>
                     Registrar Programa
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">

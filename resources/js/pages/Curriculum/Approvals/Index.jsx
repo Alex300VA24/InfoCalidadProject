@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import NativeModal, { prefetchModalPage } from '../../../components/Modal/NativeModal'
 
 const decisionStyle = (report) => {
     if (!report.approval) {
@@ -16,6 +18,9 @@ const decisionLabel = (report) => {
 }
 
 export default function CurriculumApprovalsIndex({ reports }) {
+    const [modal, setModal] = useState(null)
+    const closeModal = () => setModal(null)
+
     return (
         <div className="page-enter">
             <div className="max-w-7xl mx-auto px-5 sm:px-8">
@@ -63,8 +68,11 @@ export default function CurriculumApprovalsIndex({ reports }) {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <a
-                                                href={`/curriculum/approvals/${report.id}/review`}
+                                            <button
+                                                type="button"
+                                                onClick={() => setModal({ href: `/curriculum/approvals/${report.id}/review`, title: `${report.approval ? 'Informe' : 'Revisar informe'} #${report.id}` })}
+                                                onMouseEnter={() => prefetchModalPage(`/curriculum/approvals/${report.id}/review`)}
+                                                onFocus={() => prefetchModalPage(`/curriculum/approvals/${report.id}/review`)}
                                                 className="inline-flex items-center gap-1 text-navy hover:text-[#343d96]"
                                                 title={report.approval ? 'Ver informe' : 'Revisar informe'}
                                             >
@@ -74,7 +82,7 @@ export default function CurriculumApprovalsIndex({ reports }) {
                                                 <span className="text-sm font-semibold hidden sm:inline">
                                                     {report.approval ? 'Ver' : 'Revisar'}
                                                 </span>
-                                            </a>
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -96,6 +104,13 @@ export default function CurriculumApprovalsIndex({ reports }) {
                     <Pagination links={reports.links} />
                 </div>
             </div>
+            <NativeModal
+                open={Boolean(modal)}
+                href={modal?.href ?? ''}
+                title={modal?.title ?? ''}
+                onClose={closeModal}
+                exitPaths={['/curriculum/approvals']}
+            />
         </div>
     )
 }

@@ -3,7 +3,6 @@ import { usePage } from '@inertiajs/react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import FlashMessage from '../components/FlashMessage'
-import LoadingOverlay from '../components/LoadingOverlay'
 
 export default function AppLayout({ children }) {
     const { auth } = usePage().props
@@ -43,8 +42,6 @@ export default function AppLayout({ children }) {
             className={`app-shell ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}
             style={user?.view_scale ? { zoom: `${user.view_scale}%` } : undefined}
         >
-            <LoadingOverlay />
-
             <div
                 className={`sidebar-backdrop ${sidebarOpen ? 'is-visible' : ''}`}
                 onClick={() => setSidebarOpen(false)}

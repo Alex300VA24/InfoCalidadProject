@@ -1,4 +1,4 @@
-import { router } from '@inertiajs/react'
+import { Link, router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 
 export default function ClassSessionsCoverage({ rows, period, periods }) {
@@ -20,6 +20,10 @@ export default function ClassSessionsCoverage({ rows, period, periods }) {
                     <h2 className="text-3xl font-bold text-navy mt-2">Avance de Ejecución</h2>
                     <p className="text-slate-500">Progreso de horas ejecutadas versus planificadas por asignatura.</p>
                 </div>
+                <Link href="/execution" prefetch="hover" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-navy shadow-sm transition-colors hover:border-brand-300 hover:bg-brand-50">
+                    <span className="material-symbols-outlined text-[19px]" aria-hidden="true">arrow_back</span>
+                    Volver a sesiones de clase
+                </Link>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">

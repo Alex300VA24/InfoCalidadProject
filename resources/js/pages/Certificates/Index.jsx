@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const formatDate = (value) => {
     if (!value) return '—'
@@ -46,10 +47,10 @@ export default function CertificatesIndex({ certificates, types, students, filte
                         <p className="text-slate-500">Emisión de certificados de estudios, prácticas y constancias.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a href="/degrees/certificates/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                        <ModalLink href="/degrees/certificates/create" title="Emitir certificado" context="Grados y Títulos" icon="workspace_premium" returnPath="/degrees/certificates" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                             <span className="material-symbols-outlined text-lg">workspace_premium</span>
                             Emitir Certificado
-                        </a>
+                        </ModalLink>
                     </div>
                 </div>
 
@@ -115,9 +116,9 @@ export default function CertificatesIndex({ certificates, types, students, filte
                                             <a href={`/degrees/certificates/${certificate.id}/download`} data-turbo="false" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy" title="Descargar">
                                                 <span className="material-symbols-outlined text-lg">download</span>
                                             </a>
-                                            <a href={`/degrees/certificates/${certificate.id}`} title="Ver detalle" aria-label="Ver detalle del certificado" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                            <ModalLink href={`/degrees/certificates/${certificate.id}`} title="Detalle del certificado" context="Grados y Títulos" icon="workspace_premium" returnPath="/degrees/certificates" aria-label="Ver detalle del certificado" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
-                                            </a>
+                                            </ModalLink>
                                         </td>
                                     </tr>
                                 )) : (

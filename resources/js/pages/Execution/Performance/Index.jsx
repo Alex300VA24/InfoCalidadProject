@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 export default function PerformanceIndex({ evaluations, periods, teachers, sources, filters }) {
     const query = (extra = {}) => {
@@ -34,10 +35,10 @@ export default function PerformanceIndex({ evaluations, periods, teachers, sourc
                     <h2 className="text-3xl font-bold text-navy mt-2">Desempeño Docente</h2>
                     <p className="text-slate-500">Evaluaciones del desempeño docente por fuente y periodo.</p>
                 </div>
-                <a href="/execution/performance/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/execution/performance/create" title="Registrar evaluación docente" context="Ejecución del Plan Curricular" icon="fact_check" returnPath="/execution/performance" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">fact_check</span>
                     Registrar Evaluación
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">

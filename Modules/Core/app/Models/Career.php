@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Core\Support\CatalogCache;
 
 class Career extends Model
 {
@@ -14,6 +15,12 @@ class Career extends Model
     protected $table = 'core.careers';
 
     protected $fillable = ['code', 'name', 'description', 'is_active', 'faculty_id'];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => CatalogCache::forget());
+        static::deleted(fn () => CatalogCache::forget());
+    }
 
     protected function casts(): array
     {

@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
+import Breadcrumbs from '../../components/Breadcrumbs'
 
 export default function EvaluationsRecord({ rows, period, subject, periods, subjects }) {
     const submit = (e) => {
@@ -16,6 +17,14 @@ export default function EvaluationsRecord({ rows, period, subject, periods, subj
     return (
         <div className="page-enter">
             <div className="max-w-7xl mx-auto px-5 sm:px-8">
+                <Breadcrumbs
+                    backHref="/evaluations"
+                    items={[
+                        { label: 'Evaluaciones', href: '/evaluations' },
+                        { label: 'Acta de Notas' },
+                    ]}
+                />
+
                 <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">
                     <div className="p-4">
                         <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-4 gap-4">

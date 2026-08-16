@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { usePage, router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
+import ConfirmModal from '../../components/Modal/ConfirmModal'
 
 function formatDateTime(value) {
     if (!value) return ''
@@ -22,11 +24,16 @@ function formatKb(bytes) {
 export default function SyllabiShow({ syllabus }) {
     const { can } = usePage().props
     const isVisado = Boolean(syllabus.is_visado)
+    const [confirmingVisa, setConfirmingVisa] = useState(false)
+    const [processingVisa, setProcessingVisa] = useState(false)
 
-    const handleVisa = (e) => {
-        e.preventDefault()
-        if (!isVisado && !confirm('¿Confirmar visado del sílabo? Esta acción es irreversible.')) return
-        router.post(`/syllabi/${syllabus.id}/visa`, {}, { preserveScroll: true })
+    const handleVisa = () => {
+        setProcessingVisa(true)
+        router.post(`/syllabi/${syllabus.id}/visa`, {}, {
+            preserveScroll: true,
+            onSuccess: () => setConfirmingVisa(false),
+            onFinish: () => setProcessingVisa(false),
+        })
     }
 
     return (
@@ -62,15 +69,16 @@ export default function SyllabiShow({ syllabus }) {
                                     Descargar PDF
                                 </a>
                                 {!isVisado && can.syllabi && (
-                                    <form onSubmit={handleVisa} className="inline-flex">
+                                    <div className="inline-flex">
                                         <button
-                                            type="submit"
+                                            type="button"
+                                            onClick={() => setConfirmingVisa(true)}
                                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white font-black rounded shadow-md text-sm hover:bg-emerald-700 transition-colors"
                                         >
                                             <span className="material-symbols-outlined text-lg">verified_user</span>
                                             Visar Sílabo
                                         </button>
-                                    </form>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -161,7 +169,7 @@ export default function SyllabiShow({ syllabus }) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {syllabus.visas.map((visa) => (
+                                    {(syllabus.visas ?? []).map((visa) => (
                                         <tr key={visa.id} className="border-b border-slate-100 hover:bg-slate-50">
                                             <td className="py-3 px-4 text-navy font-bold">{visa.visor?.name}</td>
                                             <td className="py-3 px-4 text-slate-500 capitalize">{visa.visor?.role?.name ?? '—'}</td>
@@ -180,6 +188,16 @@ export default function SyllabiShow({ syllabus }) {
                     )}
                 </div>
             </div>
+            <ConfirmModal
+                open={confirmingVisa}
+                title="Confirmar visado"
+                message={`Se registrará como visado el sílabo de ${syllabus.subject?.name ?? 'esta asignatura'}. Esta acción es irreversible.`}
+                confirmLabel="Visar sílabo"
+                tone="success"
+                processing={processingVisa}
+                onConfirm={handleVisa}
+                onCancel={() => setConfirmingVisa(false)}
+            />
         </div>
     )
 }

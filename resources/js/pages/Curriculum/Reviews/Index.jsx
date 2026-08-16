@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import NativeModal, { prefetchModalPage } from '../../../components/Modal/NativeModal'
 
 const REVIEW_STATUS_STYLES = {
     completed: 'text-emerald-700 bg-emerald-100 border-emerald-200',
@@ -12,6 +14,9 @@ const REVIEW_STATUS_LABELS = {
 }
 
 export default function CurriculumReviewsIndex({ reviews }) {
+    const [modal, setModal] = useState(null)
+    const closeModal = () => setModal(null)
+
     return (
         <div className="page-enter">
             <div className="max-w-7xl mx-auto px-5 sm:px-8">
@@ -24,13 +29,16 @@ export default function CurriculumReviewsIndex({ reviews }) {
                         <p className="text-slate-500">Revisiones curriculares y acciones derivadas.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a
-                            href="/curriculum/reviews/create"
+                        <button
+                            type="button"
+                            onClick={() => setModal({ href: '/curriculum/reviews/create', title: 'Nueva revisión curricular', size: 'medium' })}
+                            onMouseEnter={() => prefetchModalPage('/curriculum/reviews/create')}
+                            onFocus={() => prefetchModalPage('/curriculum/reviews/create')}
                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-800 text-white rounded-md text-xs font-semibold uppercase tracking-widest hover:bg-gray-700"
                         >
                             <span className="material-symbols-outlined text-base">checklist</span>
                             Nueva Revisión
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -64,14 +72,15 @@ export default function CurriculumReviewsIndex({ reviews }) {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <a
-                                                href={`/curriculum/reviews/${review.id}`}
+                                            <button
+                                                type="button"
+                                                onClick={() => setModal({ href: `/curriculum/reviews/${review.id}`, title: `Revisión #${review.id}`, size: 'wide' })}
                                                 className="inline-flex items-center gap-1 text-navy hover:text-[#343d96] mr-2"
                                                 title="Ver revisión"
                                             >
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
                                                 <span className="hidden sm:inline text-sm font-semibold">Ver</span>
-                                            </a>
+                                            </button>
                                             {review.status === 'draft' && (
                                                 <a
                                                     href={`/curriculum/reviews/${review.id}/evaluate`}
@@ -101,6 +110,14 @@ export default function CurriculumReviewsIndex({ reviews }) {
                     <Pagination links={reviews.links} />
                 </div>
             </div>
+            <NativeModal
+                open={Boolean(modal)}
+                href={modal?.href ?? ''}
+                title={modal?.title ?? ''}
+                size={modal?.size}
+                onClose={closeModal}
+                exitPaths={['/curriculum/reviews']}
+            />
         </div>
     )
 }

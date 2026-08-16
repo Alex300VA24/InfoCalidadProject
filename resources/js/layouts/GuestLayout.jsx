@@ -11,9 +11,10 @@ export default function GuestLayout({ children }) {
                         <span><strong className="block text-sm">UNT · Ingeniería Informática</strong><span className="mt-1 block text-xs text-brand-200">Plataforma de Calidad Académica</span></span>
                     </Link>
                     <div className="max-w-lg pb-10">
-                        <span className="material-symbols-outlined text-[40px] text-brand-300">verified_user</span>
+                        <span className="public-auth__seal material-symbols-outlined">verified_user</span>
                         <p className="mt-6 text-balance text-4xl font-black leading-tight tracking-[-0.03em]">Procesos académicos conectados por un propósito común</p>
                         <p className="mt-5 max-w-md text-base leading-8 text-slate-300">Acceda al entorno institucional para participar en la gestión y mejora continua de la formación.</p>
+                        <div className="public-auth__trust"><span><i></i>Conexión institucional segura</span><span>Acceso según rol académico</span></div>
                     </div>
                     <p className="text-xs text-slate-500">Universidad Nacional de Trujillo</p>
                 </section>

@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import ModalLink from '../../components/Modal/ModalLink'
 
 const scoreBadge = (score) => {
     const value = Number(score)
@@ -52,13 +53,17 @@ export default function EvaluationsIndex({ evaluations, periods, subjects, stude
                         <span className="material-symbols-outlined text-lg">edit_note</span>
                         Acta de Notas
                     </a>
-                    <a
+                    <ModalLink
                         href="/evaluations/create"
+                        title="Registrar evaluación"
+                        context="Enseñanza y Aprendizaje"
+                        icon="fact_check"
+                        returnPath="/evaluations"
                         className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                     >
                         <span className="material-symbols-outlined text-lg">fact_check</span>
                         Registrar Evaluación
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 
@@ -131,9 +136,9 @@ export default function EvaluationsIndex({ evaluations, periods, subjects, stude
                                         </td>
                                         <td className="px-6 py-4 text-slate-500">{evaluation.evaluation_date}</td>
                                         <td className="px-6 py-4 text-right">
-                                            <a href={`/evaluations/${evaluation.id}`} title="Ver detalle" aria-label={`Ver detalle de la evaluación ${evaluation.id}`} className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                            <ModalLink href={`/evaluations/${evaluation.id}`} title="Detalle de evaluación" context="Enseñanza y Aprendizaje" icon="fact_check" returnPath="/evaluations" aria-label={`Ver detalle de la evaluación ${evaluation.id}`} className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                                 <span className="material-symbols-outlined text-lg">visibility</span>
-                                            </a>
+                                            </ModalLink>
                                         </td>
                                     </tr>
                                 ))

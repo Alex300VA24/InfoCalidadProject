@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 export default function ClassSessionsIndex({ sessions, periods, subjects, filters }) {
     const query = (extra = {}) => {
@@ -46,10 +47,10 @@ export default function ClassSessionsIndex({ sessions, periods, subjects, filter
                         <span className="material-symbols-outlined text-lg">progress_activity</span>
                         Avance de Ejecución
                     </a>
-                    <a href="/execution/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <ModalLink href="/execution/create" title="Registrar sesión de clase" context="Ejecución del Plan Curricular" icon="event_available" returnPath="/execution" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                         <span className="material-symbols-outlined text-lg">event_available</span>
                         Registrar Sesión
-                    </a>
+                    </ModalLink>
                 </div>
             </div>
 
@@ -121,9 +122,9 @@ export default function ClassSessionsIndex({ sessions, periods, subjects, filter
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <a href={`/execution/${session.id}`} title="Ver detalle" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <ModalLink href={`/execution/${session.id}`} title="Detalle de sesión de clase" context="Ejecución del Plan Curricular" icon="event_available" returnPath="/execution" className="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span className="material-symbols-outlined text-lg">visibility</span>
-                                        </a>
+                                        </ModalLink>
                                     </td>
                                 </tr>
                             )) : (

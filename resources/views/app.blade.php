@@ -19,6 +19,23 @@
         <x-inertia::head />
     </head>
     <body class="font-sans antialiased app-body">
+        @if (request()->is('dashboard'))
+            @php($dashboardKpis = $page['props']['kpis'] ?? [])
+            <noscript>
+                <section aria-label="Resumen académico">
+                    <h1>Centro de Control Académico Institucional</h1>
+                    <dl>
+                        <dt>Vacantes ofrecidas</dt><dd>{{ $dashboardKpis['totalVacantes'] ?? 0 }}</dd>
+                        <dt>Inserción laboral</dt><dd>{{ $dashboardKpis['insercionLaboral'] ?? 0 }}%</dd>
+                        <dt>Logro de competencias</dt><dd>{{ $dashboardKpis['competenciaPromedio'] ?? 0 }}/20</dd>
+                        <dt>Cobertura de vacantes</dt><dd>{{ $dashboardKpis['cobertura'] ?? 0 }}%</dd>
+                    </dl>
+                    @foreach (($dashboardKpis['ingresantesPorModalidad'] ?? []) as $modalidad => $total)
+                        <p>{{ ucfirst($modalidad) }}: {{ $total }}</p>
+                    @endforeach
+                </section>
+            </noscript>
+        @endif
         <x-inertia::app />
     </body>
 </html>

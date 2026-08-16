@@ -1,6 +1,8 @@
-import { usePage, router } from '@inertiajs/react'
+import { useState } from 'react'
+import { router } from '@inertiajs/react'
 import AppLayout from '../../layouts/AppLayout'
 import Pagination from '../../components/Pagination'
+import NativeModal, { prefetchModalPage } from '../../components/Modal/NativeModal'
 
 function diffForHumans(value) {
     if (!value) return ''
@@ -85,7 +87,8 @@ const STATUS_ICONS = {
 }
 
 export default function ResourcesIndex({ resourceRequests, periods, filters }) {
-    const { can } = usePage().props
+    const [modal, setModal] = useState(null)
+    const closeModal = () => setModal(null)
 
     const applyFilter = (key, value) => {
         const params = { ...filters }
@@ -115,13 +118,16 @@ export default function ResourcesIndex({ resourceRequests, periods, filters }) {
                         <p className="text-slate-500">Gestiona las solicitudes de materiales y equipamiento educativo.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        <a
-                            href="/resources/create"
+                        <button
+                            type="button"
+                            onClick={() => setModal({ href: '/resources/create', title: 'Nueva solicitud de recursos', size: 'wide' })}
+                            onMouseEnter={() => prefetchModalPage('/resources/create')}
+                            onFocus={() => prefetchModalPage('/resources/create')}
                             className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all"
                         >
                             <span className="material-symbols-outlined text-lg">add_circle</span>
                             Nueva Solicitud
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -242,13 +248,16 @@ export default function ResourcesIndex({ resourceRequests, periods, filters }) {
                                             <span className="material-symbols-outlined text-slate-400 text-lg">
                                                 {icon}
                                             </span>
-                                            <a
-                                                href={`/resources/${resource.id}`}
+                                            <button
+                                                type="button"
+                                                onClick={() => setModal({ href: `/resources/${resource.id}`, title: `${resource.code} · ${resource.title}`, size: 'wide' })}
+                                                onMouseEnter={() => prefetchModalPage(`/resources/${resource.id}`)}
+                                                onFocus={() => prefetchModalPage(`/resources/${resource.id}`)}
                                                 className="inline-flex items-center gap-1 text-navy font-bold text-sm hover:underline underline-offset-4"
                                             >
                                                 Revisar
                                                 <span className="material-symbols-outlined text-lg">arrow_forward</span>
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -271,6 +280,14 @@ export default function ResourcesIndex({ resourceRequests, periods, filters }) {
                     <Pagination links={resourceRequests.links} />
                 </div>
             </div>
+            <NativeModal
+                open={Boolean(modal)}
+                href={modal?.href ?? ''}
+                title={modal?.title ?? ''}
+                size={modal?.size}
+                onClose={closeModal}
+                exitPaths={['/resources']}
+            />
         </div>
     )
 }

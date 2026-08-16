@@ -1,6 +1,7 @@
 import { router } from '@inertiajs/react'
 import AppLayout from '../../../layouts/AppLayout'
 import Pagination from '../../../components/Pagination'
+import ModalLink from '../../../components/Modal/ModalLink'
 
 export default function ExecutionsIndex({ executions, periods, subjects, statuses, filters }) {
     const query = (extra = {}) => {
@@ -34,10 +35,10 @@ export default function ExecutionsIndex({ executions, periods, subjects, statuse
                     <h2 className="text-3xl font-bold text-navy mt-2">Ejecución de Asignaturas</h2>
                     <p className="text-slate-500">Avance porcentual de las asignaturas por periodo académico.</p>
                 </div>
-                <a href="/execution/executions/create" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                <ModalLink href="/execution/executions/create" title="Registrar avance de ejecución" context="Ejecución del Plan Curricular" icon="monitoring" returnPath="/execution/executions" className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
                     <span className="material-symbols-outlined text-lg">add</span>
                     Registrar Ejecución
-                </a>
+                </ModalLink>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-6">
