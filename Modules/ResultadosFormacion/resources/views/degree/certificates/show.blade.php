@@ -7,7 +7,7 @@
                 <p class="text-slate-500">{{ $certificate->code }} — {{ $certificate->typeLabel() }}</p>
             </div>
             <div class="flex gap-3">
-                <a href="{{ route('degree.certificates.download', $certificate) }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">Descargar PDF</a>
+                <a data-turbo="false" href="{{ route('degree.certificates.download', $certificate) }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">Descargar PDF</a>
             </div>
         </div>
     </x-slot>

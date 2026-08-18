@@ -19,7 +19,7 @@ class Syllabus extends Model
 {
     use HasFactory;
 
-    protected $table = 'syllabi';
+    protected $table = 'app_gestion_curricular.syllabi';
 
     protected $fillable = [
         'career_id', 'subject_id', 'academic_period_id', 'teacher_id',

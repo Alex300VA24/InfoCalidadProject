@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\Student;
 use Modules\ResultadosFormacion\Http\Requests\StoreCertificateRequest;
@@ -24,19 +25,27 @@ class CertificateController extends Controller
             $query->where('student_id', $request->student_id);
         }
 
-        $certificates = $query->latest('issued_at')->paginate(15);
+        $certificates = $query->latest('issued_at')->paginate(15)->withQueryString();
         $types = Certificate::TYPES;
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
 
-        return view('degree.certificates.index', compact('certificates', 'types', 'students'));
+        return Inertia::render('Certificates/Index', [
+            'certificates' => $certificates,
+            'types' => $types,
+            'students' => $students,
+            'filters' => $request->only(['type', 'student_id']),
+        ]);
     }
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $types = Certificate::TYPES;
 
-        return view('degree.certificates.create', compact('students', 'types'));
+        return Inertia::render('Certificates/Create', [
+            'students' => $students,
+            'types' => $types,
+        ]);
     }
 
     public function store(StoreCertificateRequest $request)
@@ -61,7 +70,9 @@ class CertificateController extends Controller
     {
         $certificate->load(['student.user']);
 
-        return view('degree.certificates.show', compact('certificate'));
+        return Inertia::render('Certificates/Show', [
+            'certificate' => $certificate,
+        ]);
     }
 
     public function download(Certificate $certificate)

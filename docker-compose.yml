@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: calidad_unt_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: plataforma_calidad
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d plataforma_calidad"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: calidad_unt_app
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./.env.docker:/app/.env
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+    ports:
+      - "8000:8000"
+    command: php artisan serve --host=0.0.0.0 --port=8000
+    depends_on:
+      db:
+        condition: service_healthy
+
+  queue:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: calidad_unt_queue
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./.env.docker:/app/.env
+    environment:
+      APP_ENV: local
+    command: php artisan queue:listen --tries=1 --timeout=0
+    depends_on:
+      - app
+
+volumes:
+  db_data:

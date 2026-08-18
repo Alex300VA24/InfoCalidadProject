@@ -1,13 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-end">
+        <div class="flex flex-wrap justify-between items-end gap-3">
             <div>
                 <span class="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">Tutoría Académica</span>
                 <h2 class="text-3xl font-bold text-navy mt-2">Nivelación y Recuperación</h2>
                 <p class="text-slate-500">Programas de nivelación y recuperación académica.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="{{ route('tutoring.remedial.create') }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">+ Registrar Programa</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('tutoring.remedial.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <span class="material-symbols-outlined text-lg">add</span>
+                    Registrar Programa
+                </a>
             </div>
         </div>
     </x-slot>
@@ -18,7 +21,7 @@
                 <div class="p-4">
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <select name="academic_period_id" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="academic_period_id" onchange="this.form.submit()" aria-label="Filtrar por periodo" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los periodos</option>
                                 @foreach($periods as $period)
                                     <option value="{{ $period->id }}" {{ request('academic_period_id') == $period->id ? 'selected' : '' }}>{{ $period->name }}</option>
@@ -26,15 +29,21 @@
                             </select>
                         </div>
                         <div>
-                            <select name="status" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="status" onchange="this.form.submit()" aria-label="Filtrar por estado" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los estados</option>
                                 @foreach($statuses as $key => $label)
                                     <option value="{{ $key }}" {{ request('status') === $key ? 'selected' : '' }}>{{ $label }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <button type="submit" class="w-full px-4 py-2 bg-navy text-white rounded-lg text-sm font-semibold hover:bg-[#343d96] transition-colors">Filtrar</button>
+                        <div class="flex items-center gap-2">
+                            @if(count(request()->except(['page'])) > 0)
+                                <a href="{{ route('tutoring.remedial.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-500 hover:text-navy transition-colors" title="Quitar filtros">
+                                    <span class="material-symbols-outlined text-lg">filter_alt_off</span>
+                                    Limpiar
+                                </a>
+                            @endif
+                            <p class="text-xs text-slate-400">Los filtros se aplican automáticamente</p>
                         </div>
                     </form>
                 </div>

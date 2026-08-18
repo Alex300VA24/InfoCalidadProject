@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Execution;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\User;
@@ -25,22 +26,33 @@ class TeacherPerformanceController extends Controller
             $query->where('source', $request->source);
         }
 
-        $evaluations = $query->latest('evaluated_at')->paginate(15);
+        $evaluations = $query->latest('evaluated_at')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $sources = TeacherPerformanceEvaluation::SOURCES;
 
-        return view('execution.performance', compact('evaluations', 'periods', 'teachers', 'sources'));
+        return Inertia::render('Execution/Performance/Index', [
+            'evaluations' => $evaluations,
+            'periods' => $periods,
+            'teachers' => $teachers,
+            'sources' => $sources,
+            'filters' => $request->only(['academic_period_id', 'teacher_id', 'source']),
+        ]);
     }
 
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $sources = TeacherPerformanceEvaluation::SOURCES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('execution.performance-create', compact('periods', 'teachers', 'sources', 'defaultPeriod'));
+        return Inertia::render('Execution/Performance/Create', [
+            'periods' => $periods,
+            'teachers' => $teachers,
+            'sources' => $sources,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreTeacherPerformanceEvaluationRequest $request)

@@ -6,15 +6,17 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="mb-4">
-                <a href="{{ route('curriculum.reviews.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
-                    + Nueva Revisión
+                <a href="{{ route('curriculum.reviews.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">
+                    <span class="material-symbols-outlined text-base">checklist</span>
+                    Nueva Revisión
                 </a>
             </div>
 
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
+                    <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
@@ -39,9 +41,15 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm">
-                                        <a href="{{ route('curriculum.reviews.show', $review) }}" class="text-blue-600 hover:text-blue-900 mr-2">Ver</a>
+                                        <a href="{{ route('curriculum.reviews.show', $review) }}" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 mr-2" title="Ver revisión">
+                                            <span class="material-symbols-outlined text-lg">visibility</span>
+                                            Ver
+                                        </a>
                                         @if($review->status === 'draft')
-                                            <a href="{{ route('curriculum.reviews.evaluate', $review) }}" class="text-green-600 hover:text-green-900">Evaluar</a>
+                                            <a href="{{ route('curriculum.reviews.evaluate', $review) }}" class="inline-flex items-center gap-1 text-green-600 hover:text-green-900" title="Evaluar revisión">
+                                                <span class="material-symbols-outlined text-lg">task_alt</span>
+                                                Evaluar
+                                            </a>
                                         @endif
                                     </td>
                                 </tr>
@@ -52,6 +60,7 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                     <div class="mt-4">
                         {{ $reviews->links() }}
                     </div>

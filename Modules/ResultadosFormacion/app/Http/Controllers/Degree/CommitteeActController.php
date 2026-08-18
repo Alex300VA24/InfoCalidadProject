@@ -2,6 +2,7 @@
 
 namespace Modules\ResultadosFormacion\Http\Controllers\Degree;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\ResultadosFormacion\Http\Requests\StoreDegreeCommitteeActRequest;
 use Modules\ResultadosFormacion\Models\DegreeApplication;
@@ -13,12 +14,14 @@ class CommitteeActController extends Controller
     {
         $degreeApplication->load(['student.user']);
 
-        $acts = DegreeCommitteeAct::with('degreeApplication')
-            ->where('degree_application_id', $degreeApplication->id)
+        $acts = DegreeCommitteeAct::where('degree_application_id', $degreeApplication->id)
             ->latest('session_date')
             ->paginate(10);
 
-        return view('degree.acts.index', compact('degreeApplication', 'acts'));
+        return Inertia::render('CommitteeActs/Index', [
+            'degreeApplication' => $degreeApplication,
+            'acts' => $acts,
+        ]);
     }
 
     public function create(DegreeApplication $degreeApplication)
@@ -27,7 +30,11 @@ class CommitteeActController extends Controller
         $actTypes = DegreeCommitteeAct::ACT_TYPES;
         $results = DegreeCommitteeAct::RESULTS;
 
-        return view('degree.acts.create', compact('degreeApplication', 'actTypes', 'results'));
+        return Inertia::render('CommitteeActs/Create', [
+            'degreeApplication' => $degreeApplication,
+            'actTypes' => $actTypes,
+            'results' => $results,
+        ]);
     }
 
     public function store(StoreDegreeCommitteeActRequest $request, DegreeApplication $degreeApplication)

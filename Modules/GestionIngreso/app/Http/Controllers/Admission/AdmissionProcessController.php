@@ -2,6 +2,7 @@
 
 namespace Modules\GestionIngreso\Http\Controllers\Admission;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
@@ -12,11 +13,15 @@ class AdmissionProcessController extends Controller
 {
     public function index()
     {
-        $processes = AdmissionProcess::with(['academicPeriod', 'career', 'applicants'])
+        $processes = AdmissionProcess::with(['academicPeriod', 'career'])
+            ->withCount(['applicants as ingresantes' => fn ($q) => $q->where('status', 'ingresante')])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admission.processes.index', compact('processes'));
+        return Inertia::render('Admission/Processes/Index', [
+            'processes' => $processes,
+        ]);
     }
 
     public function create()
@@ -25,7 +30,11 @@ class AdmissionProcessController extends Controller
         $careers = Career::where('is_active', true)->orderBy('code')->get();
         $defaultCareer = Career::resolveDefault(request()->user());
 
-        return view('admission.processes.create', compact('periods', 'careers', 'defaultCareer'));
+        return Inertia::render('Admission/Processes/Create', [
+            'periods' => $periods,
+            'careers' => $careers,
+            'defaultCareer' => $defaultCareer,
+        ]);
     }
 
     public function store(StoreAdmissionProcessRequest $request)
@@ -39,8 +48,14 @@ class AdmissionProcessController extends Controller
     public function show(AdmissionProcess $process)
     {
         $process->load(['academicPeriod', 'career', 'applicants.career']);
+        $process->loadCount([
+            'applicants as total_applicants',
+            'applicants as ingresantes' => fn ($q) => $q->where('status', 'ingresante'),
+        ]);
 
-        return view('admission.processes.show', compact('process'));
+        return Inertia::render('Admission/Processes/Show', [
+            'process' => $process,
+        ]);
     }
 
     public function edit(AdmissionProcess $process)
@@ -48,7 +63,11 @@ class AdmissionProcessController extends Controller
         $periods = AcademicPeriod::all();
         $careers = Career::where('is_active', true)->orderBy('code')->get();
 
-        return view('admission.processes.edit', compact('process', 'periods', 'careers'));
+        return Inertia::render('Admission/Processes/Edit', [
+            'process' => $process,
+            'periods' => $periods,
+            'careers' => $careers,
+        ]);
     }
 
     public function update(StoreAdmissionProcessRequest $request, AdmissionProcess $process)

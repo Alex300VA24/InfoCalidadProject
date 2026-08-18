@@ -9,12 +9,13 @@ use Modules\Core\Models\AcademicPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ResourceRequestController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ResourceRequest::with(['academicPeriod', 'applicant']);
+        $query = ResourceRequest::with(['academicPeriod', 'applicant', 'documents', 'attachments']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
@@ -22,18 +23,22 @@ class ResourceRequestController extends Controller
         if ($request->filled('request_type')) {
             $query->where('request_type', $request->request_type);
         }
+        if ($request->filled('academic_period_id')) {
+            $query->where('academic_period_id', $request->academic_period_id);
+        }
 
-        $requests = $query->latest()->paginate(10);
-        $periods = AcademicPeriod::all();
+        $resourceRequests = $query->latest()->paginate(10)->withQueryString();
+        $periods = AcademicPeriod::all(['id', 'name']);
+        $filters = $request->only(['status', 'request_type', 'academic_period_id']);
 
-        return view('resources.index', compact('requests', 'periods'));
+        return Inertia::render('Resources/Index', compact('resourceRequests', 'periods', 'filters'));
     }
 
     public function create()
     {
-        $periods = AcademicPeriod::all();
+        $periods = AcademicPeriod::all(['id', 'name']);
 
-        return view('resources.create', compact('periods'));
+        return Inertia::render('Resources/Create', compact('periods'));
     }
 
     public function store(StoreResourceRequest $request)
@@ -79,7 +84,7 @@ class ResourceRequestController extends Controller
     {
         $resourceRequest->load(['academicPeriod', 'applicant', 'documents', 'attachments']);
 
-        return view('resources.show', compact('resourceRequest'));
+        return Inertia::render('Resources/Show', compact('resourceRequest'));
     }
 
     public function addResponseDocument(Request $request, ResourceRequest $resourceRequest)

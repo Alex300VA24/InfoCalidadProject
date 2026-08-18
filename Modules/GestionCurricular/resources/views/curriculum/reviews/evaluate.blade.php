@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">{{ $review->checklistTemplate->code }} - {{ $review->checklistTemplate->name }}</h3>
@@ -63,7 +63,7 @@
                             @csrf
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Acción Curricular</label>
-                                @foreach(\Modules\GestionCurricular\Models\ActionType::all() as $action)
+                                @foreach($actionTypes as $action)
                                     <div class="flex items-center mb-2">
                                         <input type="radio" name="action_type_id" value="{{ $action->id }}" required class="mr-2">
                                         <div>

@@ -9,6 +9,8 @@ use Modules\Core\Models\Student;
 
 class Certificate extends Model
 {
+    protected $table = 'app_resultados_formacion.certificates';
+
     use HasFactory;
 
     public const TYPES = [
@@ -36,5 +38,10 @@ class Certificate extends Model
     public function typeLabel(): string
     {
         return self::TYPES[$this->type] ?? $this->type;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
     }
 }

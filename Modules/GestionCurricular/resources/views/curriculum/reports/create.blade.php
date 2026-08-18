@@ -6,14 +6,14 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
                 <div class="p-6">
                     <h3 class="font-semibold mb-2">Resumen de la Revisión</h3>
                     <p class="text-sm text-gray-600">
-                        Carrera: <strong>{{ $review->career->name }}</strong> |
-                        Periodo: <strong>{{ $review->academicPeriod->name }}</strong> |
-                        Acción: <strong>{{ $review->actionType->name }}</strong>
+                        Carrera: <strong>{{ $review->career?->name }}</strong> |
+                        Periodo: <strong>{{ $review->academicPeriod?->name }}</strong> |
+                        Acción: <strong>{{ $review->actionType?->name }}</strong>
                     </p>
                 </div>
             </div>

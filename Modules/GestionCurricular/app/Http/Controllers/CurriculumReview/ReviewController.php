@@ -2,13 +2,14 @@
 
 namespace Modules\GestionCurricular\Http\Controllers\CurriculumReview;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\GestionCurricular\Http\Requests\StoreCurriculumReviewRequest;
 use Modules\GestionCurricular\Http\Requests\CompleteReviewRequest;
 use Modules\GestionCurricular\Models\CurriculumReview;
 use Modules\GestionCurricular\Models\ChecklistTemplate;
-use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Career;
+use Modules\Core\Support\CatalogCache;
 use Modules\GestionCurricular\Models\ActionType;
 use Illuminate\Http\Request;
 
@@ -18,24 +19,32 @@ class ReviewController extends Controller
     {
         $reviews = CurriculumReview::with(['checklistTemplate', 'academicPeriod', 'career', 'actionType', 'reviewer'])
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('curriculum.reviews.index', compact('reviews'));
+        return Inertia::render('Curriculum/Reviews/Index', [
+            'reviews' => $reviews,
+        ]);
     }
 
     public function create()
     {
         $templates = ChecklistTemplate::where('is_active', true)->get();
-        $periods = AcademicPeriod::all();
-        $careers = Career::where('is_active', true)->orderBy('code')->get();
-        $defaultCareer = Career::resolveDefault(request()->user());
+        $periods = CatalogCache::periods();
+        $careers = CatalogCache::activeCareers();
+        $defaultCareer = Career::resolveDefault(request()->user()?->loadMissing('career'));
 
-        return view('curriculum.reviews.create', compact('templates', 'periods', 'careers', 'defaultCareer'));
+        return Inertia::render('Curriculum/Reviews/Create', [
+            'templates' => $templates,
+            'periods' => $periods,
+            'careers' => $careers,
+            'defaultCareer' => $defaultCareer,
+        ]);
     }
 
     public function store(StoreCurriculumReviewRequest $request)
     {
-        $defaultCareer = Career::resolveDefault($request->user());
+        $defaultCareer = Career::resolveDefault($request->user()?->loadMissing('career'));
 
         $review = CurriculumReview::create([
             'checklist_template_id' => $request->checklist_template_id,
@@ -53,7 +62,12 @@ class ReviewController extends Controller
     {
         $review->load(['checklistTemplate.criteria', 'evaluations']);
 
-        return view('curriculum.reviews.evaluate', compact('review'));
+        $actionTypes = ActionType::all();
+
+        return Inertia::render('Curriculum/Reviews/Evaluate', [
+            'review' => $review,
+            'actionTypes' => $actionTypes,
+        ]);
     }
 
     public function saveEvaluation(Request $request, CurriculumReview $review)
@@ -65,15 +79,23 @@ class ReviewController extends Controller
             'observations.*' => 'nullable|string|max:500',
         ]);
 
+        $rows = [];
         foreach ($request->scores as $criterionId => $score) {
-            $review->evaluations()->updateOrCreate(
-                ['criterion_id' => $criterionId],
-                [
-                    'score' => $score,
-                    'observations' => $request->observations[$criterionId] ?? null,
-                ]
-            );
+            $rows[] = [
+                'curriculum_review_id' => $review->id,
+                'criterion_id' => $criterionId,
+                'score' => $score,
+                'observations' => $request->observations[$criterionId] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
+
+        $review->evaluations()->upsert(
+            $rows,
+            ['curriculum_review_id', 'criterion_id'],
+            ['score', 'observations', 'updated_at']
+        );
 
         return redirect()->route('curriculum.reviews.evaluate', $review)
             ->with('success', 'Evaluación guardada correctamente.');
@@ -93,8 +115,10 @@ class ReviewController extends Controller
 
     public function show(CurriculumReview $review)
     {
-        $review->load(['checklistTemplate.criteria', 'evaluations', 'actionType', 'academicPeriod', 'career', 'reviewer']);
+        $review->load(['checklistTemplate.criteria', 'evaluations.criterion', 'actionType', 'academicPeriod', 'career', 'reviewer', 'technicalReport']);
 
-        return view('curriculum.reviews.show', compact('review'));
+        return Inertia::render('Curriculum/Reviews/Show', [
+            'review' => $review,
+        ]);
     }
 }

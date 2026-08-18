@@ -10,6 +10,8 @@ use Modules\Core\Models\User;
 
 class DegreeApplication extends Model
 {
+    protected $table = 'app_resultados_formacion.degree_applications';
+
     use HasFactory;
 
     public const TYPES = [
@@ -57,5 +59,15 @@ class DegreeApplication extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 }

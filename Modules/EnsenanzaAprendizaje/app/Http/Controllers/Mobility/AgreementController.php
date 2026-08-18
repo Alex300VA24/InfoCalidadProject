@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Mobility;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\EnsenanzaAprendizaje\Http\Requests\StoreAgreementRequest;
 use Modules\EnsenanzaAprendizaje\Models\Agreement;
@@ -20,11 +21,16 @@ class AgreementController extends Controller
             $query->where('status', $request->status);
         }
 
-        $agreements = $query->latest('start_date')->paginate(15);
+        $agreements = $query->latest('start_date')->paginate(15)->withQueryString();
         $types = Agreement::TYPES;
         $statuses = Agreement::STATUSES;
 
-        return view('mobility.agreements', compact('agreements', 'types', 'statuses'));
+        return Inertia::render('Agreements/Index', [
+            'agreements' => $agreements,
+            'types' => $types,
+            'statuses' => $statuses,
+            'filters' => $request->only(['type', 'status']),
+        ]);
     }
 
     public function create()
@@ -32,7 +38,10 @@ class AgreementController extends Controller
         $types = Agreement::TYPES;
         $statuses = Agreement::STATUSES;
 
-        return view('mobility.agreements-create', compact('types', 'statuses'));
+        return Inertia::render('Agreements/Create', [
+            'types' => $types,
+            'statuses' => $statuses,
+        ]);
     }
 
     public function store(StoreAgreementRequest $request)

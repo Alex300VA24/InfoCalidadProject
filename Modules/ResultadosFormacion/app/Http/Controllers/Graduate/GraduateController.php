@@ -4,6 +4,7 @@ namespace Modules\ResultadosFormacion\Http\Controllers\Graduate;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\Student;
 use Modules\ResultadosFormacion\Http\Requests\StoreGraduateRequest;
@@ -19,18 +20,25 @@ class GraduateController extends Controller
             $query->where('work_status', $request->work_status);
         }
 
-        $graduates = $query->latest('created_at')->paginate(15);
+        $graduates = $query->latest('created_at')->paginate(15)->withQueryString();
         $workStatuses = Graduate::WORK_STATUSES;
 
-        return view('graduates.index', compact('graduates', 'workStatuses'));
+        return Inertia::render('Graduates/Index', [
+            'graduates' => $graduates,
+            'workStatuses' => $workStatuses,
+            'filters' => $request->only(['work_status']),
+        ]);
     }
 
     public function create()
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $workStatuses = Graduate::WORK_STATUSES;
 
-        return view('graduates.create', compact('students', 'workStatuses'));
+        return Inertia::render('Graduates/Create', [
+            'students' => $students,
+            'workStatuses' => $workStatuses,
+        ]);
     }
 
     public function store(StoreGraduateRequest $request)
@@ -46,17 +54,24 @@ class GraduateController extends Controller
 
     public function show(Graduate $graduate)
     {
-        $graduate->load(['student.user']);
+        $graduate->load(['student.user', 'surveys']);
 
-        return view('graduates.show', compact('graduate'));
+        return Inertia::render('Graduates/Show', [
+            'graduate' => $graduate,
+        ]);
     }
 
     public function edit(Graduate $graduate)
     {
-        $students = Student::with('user')->orderBy('codigo')->get();
+        $graduate->load(['student.user']);
+        $students = Student::with('user')->orderBy('codigo')->limit(100)->get();
         $workStatuses = Graduate::WORK_STATUSES;
 
-        return view('graduates.edit', compact('graduate', 'students', 'workStatuses'));
+        return Inertia::render('Graduates/Edit', [
+            'graduate' => $graduate,
+            'students' => $students,
+            'workStatuses' => $workStatuses,
+        ]);
     }
 
     public function update(StoreGraduateRequest $request, Graduate $graduate)
@@ -79,6 +94,6 @@ class GraduateController extends Controller
             ]);
         $averageIncome = (float) Graduate::whereNotNull('monthly_income')->avg('monthly_income');
 
-        return view('graduates.stats', compact('total', 'byStatus', 'averageIncome'));
+        return Inertia::render('Graduates/Stats', compact('total', 'byStatus', 'averageIncome'));
     }
 }

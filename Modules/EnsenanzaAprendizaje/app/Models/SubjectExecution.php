@@ -19,7 +19,7 @@ class SubjectExecution extends Model
         'cerrado' => 'Cerrado',
     ];
 
-    protected $table = 'subject_executions';
+    protected $table = 'app_ensenanza_aprendizaje.subject_executions';
 
     protected $fillable = [
         'subject_id', 'teacher_id', 'academic_period_id', 'syllabus_id',
@@ -54,6 +54,11 @@ class SubjectExecution extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 
     public function isClosed(): bool

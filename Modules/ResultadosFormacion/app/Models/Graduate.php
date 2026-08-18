@@ -10,6 +10,8 @@ use Modules\Core\Models\Student;
 
 class Graduate extends Model
 {
+    protected $table = 'app_resultados_formacion.graduates';
+
     use HasFactory;
 
     public const WORK_STATUSES = [
@@ -48,5 +50,10 @@ class Graduate extends Model
     public function workStatusLabel(): string
     {
         return self::WORK_STATUSES[$this->work_status] ?? $this->work_status;
+    }
+
+    public function getWorkStatusLabelAttribute(): string
+    {
+        return $this->workStatusLabel();
     }
 }

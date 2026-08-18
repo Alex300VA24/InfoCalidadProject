@@ -20,7 +20,7 @@ class RemedialProgram extends Model
         'reprobado' => 'Reprobado',
     ];
 
-    protected $table = 'remedial_programs';
+    protected $table = 'app_ensenanza_aprendizaje.remedial_programs';
 
     protected $fillable = [
         'student_id', 'academic_period_id', 'subject_id',
@@ -45,6 +45,11 @@ class RemedialProgram extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 
     public function isPending(): bool

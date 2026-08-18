@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CurriculumReview extends Model
 {
+    protected $table = 'app_gestion_curricular.curriculum_reviews';
+
     use HasFactory;
 
     protected $fillable = [

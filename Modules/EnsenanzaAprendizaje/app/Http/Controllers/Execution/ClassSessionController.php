@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Execution;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Subject;
@@ -26,22 +27,33 @@ class ClassSessionController extends Controller
             $query->where('status', $request->status);
         }
 
-        $sessions = $query->latest('session_date')->paginate(15);
+        $sessions = $query->latest('session_date')->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
 
-        return view('execution.index', compact('sessions', 'periods', 'subjects'));
+        return Inertia::render('Execution/ClassSessions/Index', [
+            'sessions' => $sessions,
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'filters' => $request->only(['academic_period_id', 'subject_id', 'status']),
+        ]);
     }
 
     public function create()
     {
         $periods = AcademicPeriod::all();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
-        $teachers = User::withRole('docente')->orderBy('name')->get();
+        $teachers = User::withRole('docente')->orderBy('name')->limit(100)->get(['id', 'name']);
         $statuses = ClassSession::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('execution.create', compact('periods', 'subjects', 'teachers', 'statuses', 'defaultPeriod'));
+        return Inertia::render('Execution/ClassSessions/Create', [
+            'periods' => $periods,
+            'subjects' => $subjects,
+            'teachers' => $teachers,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreClassSessionRequest $request)
@@ -61,7 +73,9 @@ class ClassSessionController extends Controller
     {
         $classSession->load(['subject.career', 'academicPeriod', 'teacher']);
 
-        return view('execution.show', compact('classSession'));
+        return Inertia::render('Execution/ClassSessions/Show', [
+            'classSession' => $classSession,
+        ]);
     }
 
     public function coverage(Request $request)
@@ -72,22 +86,30 @@ class ClassSessionController extends Controller
 
         $rows = collect();
         if ($period) {
-            $rows = Subject::with('career')
+            $subjects = Subject::with('career')
                 ->where('is_active', true)
-                ->get()
-                ->map(function (Subject $subject) use ($period) {
-                    $sessions = ClassSession::where('subject_id', $subject->id)
-                        ->where('academic_period_id', $period->id)
-                        ->where('status', '!=', 'cancelada')
-                        ->get();
+                ->get();
 
-                    $executedHours = (float) $sessions->sum('hours');
+            $totals = ClassSession::select('subject_id')
+                ->selectRaw('SUM(hours) as executed_hours')
+                ->selectRaw('COUNT(*) as sessions_count')
+                ->where('academic_period_id', $period->id)
+                ->where('status', '!=', 'cancelada')
+                ->groupBy('subject_id')
+                ->get()
+                ->keyBy('subject_id');
+
+            $rows = $subjects
+                ->map(function (Subject $subject) use ($totals) {
+                    $summary = $totals->get($subject->id);
+
+                    $executedHours = (float) ($summary?->executed_hours ?? 0);
                     $plannedHours = (float) $subject->hours;
                     $percentage = $plannedHours > 0 ? round(($executedHours / $plannedHours) * 100, 2) : 0;
 
                     return [
                         'subject' => $subject,
-                        'sessions_count' => $sessions->count(),
+                        'sessions_count' => (int) ($summary?->sessions_count ?? 0),
                         'executed_hours' => $executedHours,
                         'planned_hours' => $plannedHours,
                         'percentage' => $percentage,
@@ -98,6 +120,10 @@ class ClassSessionController extends Controller
 
         $periods = AcademicPeriod::all();
 
-        return view('execution.coverage', compact('rows', 'period', 'periods'));
+        return Inertia::render('Execution/ClassSessions/Coverage', [
+            'rows' => $rows,
+            'period' => $period,
+            'periods' => $periods,
+        ]);
     }
 }

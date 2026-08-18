@@ -9,6 +9,8 @@ use Modules\Core\Models\Career;
 
 class Applicant extends Model
 {
+    protected $table = 'app_gestion_ingreso.applicants';
+
     use HasFactory;
 
     protected $fillable = [

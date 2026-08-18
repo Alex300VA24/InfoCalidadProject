@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('app_ensenanza_aprendizaje.student_evaluations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('academic_period_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('core.students')->cascadeOnDelete();
+            $table->foreignId('subject_id')->constrained('core.subjects')->cascadeOnDelete();
+            $table->foreignId('academic_period_id')->constrained('core.academic_periods')->cascadeOnDelete();
             $table->string('evaluation_type');
             $table->decimal('score', 5, 2);
             $table->date('evaluation_date');

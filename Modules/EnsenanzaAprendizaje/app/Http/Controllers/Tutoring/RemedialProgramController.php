@@ -3,6 +3,7 @@
 namespace Modules\EnsenanzaAprendizaje\Http\Controllers\Tutoring;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\AcademicPeriod;
 use Modules\Core\Models\Student;
@@ -23,22 +24,33 @@ class RemedialProgramController extends Controller
             $query->where('status', $request->status);
         }
 
-        $programs = $query->latest()->paginate(15);
+        $programs = $query->latest()->paginate(15)->withQueryString();
         $periods = AcademicPeriod::all();
         $statuses = RemedialProgram::STATUSES;
 
-        return view('tutoring.remedial', compact('programs', 'periods', 'statuses'));
+        return Inertia::render('RemedialPrograms/Index', [
+            'programs' => $programs,
+            'periods' => $periods,
+            'statuses' => $statuses,
+            'filters' => $request->only(['academic_period_id', 'status']),
+        ]);
     }
 
     public function create()
     {
         $periods = AcademicPeriod::all();
-        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->get();
+        $students = Student::with('user')->where('estado', 'activo')->orderBy('codigo')->limit(100)->get();
         $subjects = Subject::where('is_active', true)->orderBy('code')->get();
         $statuses = RemedialProgram::STATUSES;
         $defaultPeriod = AcademicPeriod::where('is_active', true)->first() ?? $periods->first();
 
-        return view('tutoring.remedial-create', compact('periods', 'students', 'subjects', 'statuses', 'defaultPeriod'));
+        return Inertia::render('RemedialPrograms/Create', [
+            'periods' => $periods,
+            'students' => $students,
+            'subjects' => $subjects,
+            'statuses' => $statuses,
+            'defaultPeriod' => $defaultPeriod,
+        ]);
     }
 
     public function store(StoreRemedialProgramRequest $request)

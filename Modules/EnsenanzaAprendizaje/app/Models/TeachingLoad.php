@@ -19,7 +19,7 @@ class TeachingLoad extends Model
         'reemplazo' => 'Reemplazo',
     ];
 
-    protected $table = 'teaching_loads';
+    protected $table = 'app_ensenanza_aprendizaje.teaching_loads';
 
     protected $fillable = [
         'teacher_id', 'subject_id', 'academic_period_id', 'section', 'hours', 'status',
@@ -48,5 +48,10 @@ class TeachingLoad extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 }

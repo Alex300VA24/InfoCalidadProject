@@ -12,6 +12,8 @@ use Modules\Core\Models\User;
 
 class StudentEvaluation extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.student_evaluations';
+
     use HasFactory;
 
     public const TYPES = [
@@ -59,5 +61,10 @@ class StudentEvaluation extends Model
     public function typeLabel(): string
     {
         return self::TYPES[$this->evaluation_type] ?? $this->evaluation_type;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
     }
 }

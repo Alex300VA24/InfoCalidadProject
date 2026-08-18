@@ -1,29 +1,43 @@
 <aside
     class="app-sidebar group/sidebar"
-    :class="{ 'is-open': sidebarOpen, 'is-collapsed': sidebarCollapsed }"
+    :class="{ 'is-open': sidebarOpen }"
     aria-label="Barra lateral"
 >
     <div class="sidebar-glow sidebar-glow--top"></div>
     <div class="sidebar-glow sidebar-glow--bottom"></div>
 
     <div class="sidebar-inner relative w-full h-full overflow-hidden">
-        <div class="sidebar-brand-wrap shrink-0 px-4 pb-5 pt-5">
+        <div class="shrink-0 px-4 pb-5 pt-5">
             <a href="{{ route('dashboard') }}" class="sidebar-brand group">
-                <img
-                    src="/static/img/logo_informatica.png"
-                    alt="Universidad Nacional de Trujillo"
-                    class="relative h-11 w-11 rounded-2xl object-cover shadow-2xl transition duration-300 group-hover:-translate-y-1 group-hover:rotate-[-2deg]"
-                >
+                <div class="nexo-brand-mark" aria-hidden="true">N</div>
 
                 <span class="min-w-0">
                     <span class="flex items-center gap-2">
-                        <strong>UNT</strong>
+                        <strong>NEXO</strong>
                         <span class="sidebar-brand__point"></span>
                     </span>
 
-                    <small>Ing. Informática</small>
+                    <small>Universidad Nacional de Trujillo</small>
                 </span>
             </a>
+        </div>
+
+        <div class="mx-4 mb-5 shrink-0 rounded-2xl border border-white/[0.08] bg-white/[0.045] p-3.5 backdrop-blur-sm">
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 text-sm font-black text-white shadow-lg shadow-blue-950/30">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </div>
+
+                <div class="min-w-0">
+                    <p class="truncate text-sm font-bold text-white">
+                        {{ Auth::user()->name }}
+                    </p>
+
+                    <p class="mt-0.5 truncate text-[10px] font-medium text-slate-400">
+                        {{ Auth::user()->roleLabel() }}
+                    </p>
+                </div>
+            </div>
         </div>
 
         <nav class="sidebar-nav flex-1 overflow-y-auto px-3" aria-label="Navegación principal">
@@ -352,6 +366,17 @@
         </nav>
 
         <div class="sidebar-footer relative shrink-0 border-t border-white/[0.07] p-3">
+            <a
+                href="{{ route('profile.edit') }}"
+                class="sidebar-link {{ request()->routeIs('profile.edit') ? 'is-active' : '' }}"
+            >
+                <span class="sidebar-link__icon">
+                    <span class="material-symbols-outlined">settings</span>
+                </span>
+
+                <span class="sidebar-link__text">Configuración</span>
+            </a>
+
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
 

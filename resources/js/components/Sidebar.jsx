@@ -1,0 +1,372 @@
+import { useEffect, useState } from 'react'
+import { Link, router, usePage } from '@inertiajs/react'
+import ConfirmModal from './Modal/ConfirmModal'
+
+const SECTION_ICONS = {
+    'Gestión Curricular': 'menu_book',
+    'Gestión del Ingreso': 'how_to_reg',
+    'Enseñanza y Aprendizaje': 'cast_for_education',
+    'Resultados de la Formación': 'emoji_events',
+}
+
+const SECTIONS = [
+    {
+        label: 'Principal',
+        items: [
+            {
+                label: 'Inicio',
+                icon: 'dashboard',
+                href: '/dashboard',
+                match: ['/dashboard'],
+            },
+        ],
+    },
+    {
+        label: 'Gestión Curricular',
+        items: [
+            {
+                label: 'Revisión curricular',
+                icon: 'fact_check',
+                href: '/curriculum/reviews',
+                gate: 'presidente-cotejo',
+                match: ['/curriculum/reviews'],
+            },
+            {
+                label: 'Aprobaciones',
+                icon: 'verified',
+                href: '/curriculum/approvals',
+                gate: 'director-escuela',
+                match: ['/curriculum/approvals'],
+            },
+            {
+                label: 'Repositorio de sílabos',
+                icon: 'folder_shared',
+                href: '/syllabi',
+                gate: 'syllabi',
+                match: ['/syllabi'],
+            },
+            {
+                label: 'Solicitudes de recursos',
+                icon: 'inventory_2',
+                href: '/resources',
+                gate: 'resources',
+                match: ['/resources'],
+            },
+        ],
+    },
+    {
+        label: 'Gestión del Ingreso',
+        items: [
+            {
+                label: 'Procesos de admisión',
+                icon: 'assignment',
+                href: '/admission/processes',
+                gate: 'coordinador-admision',
+                match: ['/admission/processes'],
+            },
+            {
+                label: 'Postulantes',
+                icon: 'groups',
+                href: '/admission/applicants',
+                gate: 'coordinador-admision',
+                match: ['/admission/applicants'],
+            },
+            {
+                label: 'Matrículas',
+                icon: 'how_to_reg',
+                href: '/enrollment',
+                gate: 'personal-matricula',
+                match: ['/enrollment'],
+                exclude: ['/enrollment/reports', '/enrollment/padron-virtual'],
+            },
+            {
+                label: 'Padrón virtual',
+                icon: 'list_alt',
+                href: '/enrollment/padron-virtual',
+                gate: 'personal-matricula',
+                match: ['/enrollment/padron-virtual'],
+            },
+            {
+                label: 'Reportes',
+                icon: 'summarize',
+                href: '/enrollment/reports/egresados',
+                gate: 'personal-matricula',
+                match: ['/enrollment/reports'],
+            },
+        ],
+    },
+    {
+        label: 'Enseñanza y Aprendizaje',
+        items: [
+            {
+                label: 'Evaluaciones',
+                icon: 'task_alt',
+                href: '/evaluations',
+                gate: 'evaluations',
+                match: ['/evaluations', '/evaluations/record'],
+                exclude: ['/evaluations/actas'],
+            },
+            {
+                label: 'Actas oficiales',
+                icon: 'fact_check',
+                href: '/evaluations/actas',
+                gate: 'evaluations',
+                match: ['/evaluations/actas'],
+            },
+            {
+                label: 'Sesiones de clase',
+                icon: 'calendar_view_month',
+                href: '/execution',
+                gate: 'execution',
+                match: ['/execution'],
+            },
+            {
+                label: 'Cargas académicas',
+                icon: 'assignments',
+                href: '/execution/loads',
+                gate: 'execution',
+                match: ['/execution/loads'],
+            },
+            {
+                label: 'Socialización de sílabos',
+                icon: 'campaign',
+                href: '/execution/socializations',
+                gate: 'execution',
+                match: ['/execution/socializations'],
+            },
+            {
+                label: 'Ejecución de asignaturas',
+                icon: 'progress_activity',
+                href: '/execution/executions',
+                gate: 'execution',
+                match: ['/execution/executions'],
+            },
+            {
+                label: 'Desempeño docente',
+                icon: 'insights',
+                href: '/execution/performance',
+                gate: 'execution',
+                match: ['/execution/performance'],
+            },
+            {
+                label: 'Tutoría académica',
+                icon: 'support_agent',
+                href: '/tutoring',
+                gate: 'tutoring',
+                match: ['/tutoring'],
+                exclude: ['/tutoring/remedial'],
+            },
+            {
+                label: 'Nivelación y recuperación',
+                icon: 'healing',
+                href: '/tutoring/remedial',
+                gate: 'tutoring',
+                match: ['/tutoring/remedial'],
+            },
+            {
+                label: 'Movilidad y becas',
+                icon: 'public',
+                href: '/mobility',
+                gate: 'mobility',
+                match: ['/mobility', '/mobility/agreements'],
+            },
+            {
+                label: 'Investigación',
+                icon: 'science',
+                href: '/research',
+                gate: 'research',
+                match: ['/research'],
+            },
+        ],
+    },
+    {
+        label: 'Resultados de la Formación',
+        items: [
+            {
+                label: 'Certificados',
+                icon: 'workspace_premium',
+                href: '/degrees/certificates',
+                gate: 'degrees',
+                match: ['/degrees/certificates'],
+            },
+            {
+                label: 'Grados y títulos',
+                icon: 'school',
+                href: '/degrees/applications',
+                gate: 'degrees',
+                match: ['/degrees/applications'],
+            },
+            {
+                label: 'Seguimiento de egresados',
+                icon: 'track_changes',
+                href: '/graduates',
+                gate: 'graduates',
+                match: ['/graduates'],
+            },
+        ],
+    },
+]
+
+export default function Sidebar({ collapsed, open, onOpenChange }) {
+    const { props, url } = usePage()
+    const can = (ability) => Boolean(props.can?.[ability])
+    const [logoutOpen, setLogoutOpen] = useState(false)
+    const [loggingOut, setLoggingOut] = useState(false)
+
+    const handleLogout = () => {
+        setLoggingOut(true)
+        router.post('/logout', {}, {
+            onFinish: () => {
+                setLoggingOut(false)
+                setLogoutOpen(false)
+            },
+        })
+    }
+
+    const path = url.split('?')[0]
+
+    const isActive = (match, exclude = []) => {
+        if (exclude.some((prefix) => path.startsWith(prefix))) return false
+        return match.some((prefix) => {
+            if (prefix.endsWith('*')) return path.startsWith(prefix.slice(0, -1))
+            return path === prefix
+        })
+    }
+
+    const sections = SECTIONS.map((section) => ({
+        ...section,
+        items: section.items.filter((item) => !item.gate || can(item.gate)),
+    })).filter((section) => section.items.length > 0)
+
+    const activeSection = sections.find((section) => section.items.some((item) => isActive(item.match, item.exclude)))?.label
+    const [expandedSection, setExpandedSection] = useState(() => {
+        if (typeof window === 'undefined') return activeSection ?? 'Principal'
+        return activeSection ?? window.sessionStorage.getItem('sidebar-section') ?? 'Principal'
+    })
+
+    useEffect(() => {
+        if (activeSection) setExpandedSection(activeSection)
+    }, [activeSection])
+
+    const toggleSection = (label) => {
+        if (label === 'Principal') return
+        const next = expandedSection === label ? null : label
+        setExpandedSection(next)
+        if (next) window.sessionStorage.setItem('sidebar-section', next)
+    }
+
+    return (
+        <aside
+            className={`app-sidebar group/sidebar ${open ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`}
+            aria-label="Barra lateral"
+        >
+            <div className="sidebar-glow sidebar-glow--top"></div>
+            <div className="sidebar-glow sidebar-glow--bottom"></div>
+
+            <div className="sidebar-inner relative flex h-full w-full flex-col overflow-hidden">
+                <div className="sidebar-brand-wrap shrink-0 px-4 pb-5 pt-5">
+                    <Link href="/dashboard" className="sidebar-brand group">
+                        <img
+                            src="/static/img/logo_informatica.png"
+                            alt="Universidad Nacional de Trujillo"
+                            className="relative h-11 w-11 rounded-2xl object-cover shadow-2xl transition duration-300 group-hover:-translate-y-1 group-hover:rotate-[-2deg]"
+                        />
+
+                        <span className="min-w-0">
+                            <span className="flex items-center gap-2">
+                                <strong>UNT</strong>
+                                <span className="sidebar-brand__point"></span>
+                            </span>
+
+                            <small>Ing. Informática</small>
+                        </span>
+                    </Link>
+                </div>
+
+                <nav className="sidebar-nav flex-1 overflow-y-auto px-3" aria-label="Navegación principal">
+                    {sections.map((section, index) => {
+                        const expanded = section.label === 'Principal' || expandedSection === section.label
+                        const panelId = `sidebar-section-${index}`
+
+                        return (
+                        <section key={section.label} className={`sidebar-section ${index > 0 ? 'mt-2' : ''}`}>
+                            <button
+                                type="button"
+                                className="sidebar-section-label"
+                                aria-expanded={expanded}
+                                aria-controls={panelId}
+                                onClick={() => toggleSection(section.label)}
+                                title={collapsed ? section.label : undefined}
+                            >
+                                <span className="sidebar-section-label__text">
+                                    {section.label !== 'Principal' && (
+                                        <span className="material-symbols-outlined sidebar-section-label__icon" aria-hidden="true">
+                                            {SECTION_ICONS[section.label]}
+                                        </span>
+                                    )}
+                                    <span>{section.label}</span>
+                                </span>
+                                {section.label !== 'Principal' && <span className="material-symbols-outlined" aria-hidden="true">expand_more</span>}
+                            </button>
+
+                            <div id={panelId} className={`sidebar-section__items ${expanded ? 'is-expanded' : ''}`} hidden={!expanded}>
+                            {section.items.map((item) => {
+                                const active = isActive(item.match, item.exclude)
+
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        className={`sidebar-link ${active ? 'is-active' : ''}`}
+                                        aria-current={active ? 'page' : undefined}
+                                        prefetch="hover"
+                                        cacheFor="30s"
+                                        title={collapsed ? item.label : undefined}
+                                        onClick={() => onOpenChange(false)}
+                                    >
+                                        <span className="sidebar-link__icon">
+                                            <span className="material-symbols-outlined">{item.icon}</span>
+                                        </span>
+
+                                        <span className="sidebar-link__text">{item.label}</span>
+
+                                        {active && (
+                                            <span className="sidebar-link__indicator"></span>
+                                        )}
+                                    </Link>
+                                )
+                            })}
+                            </div>
+                        </section>
+                        )
+                    })}
+                </nav>
+
+                <div className="sidebar-footer relative shrink-0 border-t border-white/[0.07] p-3">
+                    <button
+                        type="button"
+                        className="sidebar-link sidebar-link--logout w-full"
+                        onClick={() => setLogoutOpen(true)}
+                    >
+                        <span className="sidebar-link__icon">
+                            <span className="material-symbols-outlined">logout</span>
+                        </span>
+
+                        <span className="sidebar-link__text">Cerrar sesión</span>
+                    </button>
+                </div>
+            </div>
+
+            <ConfirmModal
+                open={logoutOpen}
+                title="¿Cerrar sesión?"
+                message="Se cerrará tu sesión actual y deberás iniciar sesión nuevamente para continuar."
+                confirmLabel="Cerrar sesión"
+                tone="primary"
+                processing={loggingOut}
+                onConfirm={handleLogout}
+                onCancel={() => setLogoutOpen(false)}
+            />
+        </aside>
+    )
+}

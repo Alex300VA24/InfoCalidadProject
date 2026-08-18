@@ -1,13 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-end">
+        <div class="flex flex-wrap justify-between items-end gap-3">
             <div>
                 <span class="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">Resultados de la Formación</span>
                 <h2 class="text-3xl font-bold text-navy mt-2">Actas de Grado</h2>
                 <p class="text-slate-500">{{ $degreeApplication->code }} — {{ $degreeApplication->student?->fullName() }}</p>
             </div>
-            <div class="flex gap-3">
-                <a href="{{ route('degree.applications.acts.create', $degreeApplication) }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">+ Registrar Acta</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('degree.applications.acts.create', $degreeApplication) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                    Registrar Acta
+                </a>
             </div>
         </div>
     </x-slot>
@@ -59,8 +62,11 @@
                 {{ $acts->links() }}
             </div>
 
-            <div class="flex justify-end mt-6">
-                <a href="{{ route('degree.applications.show', $degreeApplication) }}" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Volver al expediente</a>
+            <div class="flex flex-wrap justify-end mt-6">
+                <a href="{{ route('degree.applications.show', $degreeApplication) }}" class="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-300 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    Volver al expediente
+                </a>
             </div>
         </div>
     </div>

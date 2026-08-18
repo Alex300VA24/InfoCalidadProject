@@ -10,7 +10,7 @@ class ChecklistCriterion extends Model
 {
     use HasFactory;
 
-    protected $table = 'checklist_criteria';
+    protected $table = 'app_gestion_curricular.checklist_criteria';
 
     protected $fillable = ['checklist_template_id', 'code', 'description', 'max_score', 'weight', 'order'];
 

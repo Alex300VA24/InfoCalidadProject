@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('app_ensenanza_aprendizaje.academic_tutoring', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('academic_period_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('core.students')->cascadeOnDelete();
+            $table->foreignId('academic_period_id')->constrained('core.academic_periods')->cascadeOnDelete();
             $table->foreignId('tutor_id')->nullable()->constrained('core.users')->nullOnDelete();
             $table->date('tutoring_date');
             $table->string('type')->default('acompanamiento');

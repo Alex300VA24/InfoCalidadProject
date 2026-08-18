@@ -11,6 +11,8 @@ use Modules\Core\Models\User;
 
 class ClassSession extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.class_sessions';
+
     use HasFactory;
 
     public const STATUSES = [
@@ -51,5 +53,10 @@ class ClassSession extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 }

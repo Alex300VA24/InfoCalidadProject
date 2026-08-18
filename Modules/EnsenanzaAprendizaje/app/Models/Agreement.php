@@ -20,7 +20,7 @@ class Agreement extends Model
         'resuelto' => 'Resuelto',
     ];
 
-    protected $table = 'agreements';
+    protected $table = 'app_ensenanza_aprendizaje.agreements';
 
     protected $fillable = [
         'name', 'institution', 'type', 'description',
@@ -43,6 +43,16 @@ class Agreement extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 
     public function isVigente(): bool

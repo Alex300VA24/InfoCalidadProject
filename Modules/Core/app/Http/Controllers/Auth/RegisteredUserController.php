@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\Core\Models\Role;
 use Modules\Core\Models\User;
@@ -19,11 +20,11 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(): Response
     {
         $roles = Role::where('is_active', true)->orderBy('name')->get();
 
-        return view('auth.register', compact('roles'));
+        return Inertia::render('Auth/Register', compact('roles'));
     }
 
     /**

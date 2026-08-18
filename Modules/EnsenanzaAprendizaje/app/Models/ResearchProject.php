@@ -11,6 +11,8 @@ use Modules\Core\Models\User;
 
 class ResearchProject extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.research_projects';
+
     use HasFactory;
 
     public const STATUSES = [
@@ -54,5 +56,10 @@ class ResearchProject extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 }

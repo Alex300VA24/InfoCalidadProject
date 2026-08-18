@@ -11,6 +11,8 @@ use Modules\Core\Models\Career;
 
 class AdmissionProcess extends Model
 {
+    protected $table = 'app_gestion_ingreso.admission_processes';
+
     use HasFactory;
 
     public const STATUSES = [
@@ -47,6 +49,10 @@ class AdmissionProcess extends Model
 
     public function ingresantesCount(): int
     {
+        if (array_key_exists('ingresantes', $this->getAttributes())) {
+            return (int) $this->ingresantes;
+        }
+
         return $this->applicants()->where('status', 'ingresante')->count();
     }
 

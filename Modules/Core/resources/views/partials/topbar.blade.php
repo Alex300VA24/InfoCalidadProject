@@ -3,8 +3,9 @@
         <span class="material-symbols-outlined">menu</span>
     </button>
     <label class="nexo-search">
-
-
+        <span class="material-symbols-outlined">search</span>
+        <input type="search" placeholder="Buscar estudiantes, documentos o módulos..." aria-label="Buscar en la plataforma">
+        <kbd>Ctrl K</kbd>
     </label>
     <div class="app-topbar__actions">
         <button type="button" class="nexo-notification" aria-label="Notificaciones">

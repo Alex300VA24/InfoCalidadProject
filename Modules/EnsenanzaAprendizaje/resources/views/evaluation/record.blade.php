@@ -34,7 +34,7 @@
                         </div>
                         @if($period && $subject)
                             <div class="flex justify-end">
-                                <a href="{{ route('evaluations.acta-pdf', ['academic_period_id' => $period->id, 'subject_id' => $subject->id]) }}" target="_blank" class="w-full px-4 py-2 bg-accent text-ink font-black rounded-lg text-sm text-center hover:brightness-95 transition-all">Descargar PDF</a>
+                                <a data-turbo="false" href="{{ route('evaluations.acta-pdf', ['academic_period_id' => $period->id, 'subject_id' => $subject->id]) }}" target="_blank" class="w-full px-4 py-2 bg-accent text-ink font-black rounded-lg text-sm text-center hover:brightness-95 transition-all">Descargar PDF</a>
                             </div>
                         @endif
                     </form>

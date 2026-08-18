@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResourceDocument extends Model
 {
+    protected $table = 'app_gestion_curricular.resource_documents';
+
     use HasFactory;
 
     protected $fillable = [

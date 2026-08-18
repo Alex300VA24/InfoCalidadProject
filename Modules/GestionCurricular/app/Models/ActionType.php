@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ActionType extends Model
 {
+    protected $table = 'app_gestion_curricular.action_types';
+
     use HasFactory;
 
     protected $fillable = ['name', 'slug', 'description'];

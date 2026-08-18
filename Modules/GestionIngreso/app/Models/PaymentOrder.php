@@ -9,6 +9,8 @@ use Modules\Core\Models\Student;
 
 class PaymentOrder extends Model
 {
+    protected $table = 'app_gestion_ingreso.payment_orders';
+
     use HasFactory;
 
     protected $fillable = ['student_id', 'enrollment_id', 'concept', 'amount', 'status', 'receipt_number', 'pdf_path'];

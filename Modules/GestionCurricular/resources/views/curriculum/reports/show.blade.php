@@ -14,26 +14,26 @@
                         </button>
                     </form>
                 @endif
-                <a href="{{ route('curriculum.reports.pdf', $report) }}" class="inline-flex items-center px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-500">PDF</a>
+                <a data-turbo="false" href="{{ route('curriculum.reports.pdf', $report) }}" class="inline-flex items-center px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-500">PDF</a>
             </div>
         </div>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6">
-                    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-                        <div><span class="text-gray-500">Carrera:</span> <strong>{{ $report->curriculumReview->career->name }}</strong></div>
-                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $report->curriculumReview->academicPeriod->name }}</strong></div>
-                        <div><span class="text-gray-500">Acción Curricular:</span> <strong>{{ $report->curriculumReview->actionType->name }}</strong></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-sm">
+                        <div><span class="text-gray-500">Carrera:</span> <strong>{{ $report->curriculumReview->career?->name }}</strong></div>
+                        <div><span class="text-gray-500">Periodo:</span> <strong>{{ $report->curriculumReview->academicPeriod?->name }}</strong></div>
+                        <div><span class="text-gray-500">Acción Curricular:</span> <strong>{{ $report->curriculumReview->actionType?->name }}</strong></div>
                         <div>
                             <span class="text-gray-500">Estado:</span>
                             <span class="px-2 py-1 text-xs rounded-full {{ $report->status === 'finalized' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
                                 {{ $report->status === 'finalized' ? 'Finalizado' : 'Borrador' }}
                             </span>
                         </div>
-                        <div><span class="text-gray-500">Preparado por:</span> <strong>{{ $report->preparer->name }}</strong></div>
+                        <div><span class="text-gray-500">Preparado por:</span> <strong>{{ $report->preparer?->name }}</strong></div>
                         <div><span class="text-gray-500">Fecha:</span> <strong>{{ $report->created_at->format('d/m/Y') }}</strong></div>
                     </div>
 

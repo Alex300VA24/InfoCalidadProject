@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('app_resultados_formacion.graduates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('student_id')->constrained('core.students')->cascadeOnDelete();
             $table->date('graduation_date')->nullable();
             $table->string('work_status')->default('no_especificado');
             $table->string('employer')->nullable();

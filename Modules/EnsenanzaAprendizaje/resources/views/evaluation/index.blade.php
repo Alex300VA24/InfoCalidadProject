@@ -1,14 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-end">
+        <div class="flex flex-wrap justify-between items-end gap-3">
             <div>
                 <span class="text-[10px] font-bold text-navy bg-navy/10 px-2 py-0.5 rounded-sm uppercase tracking-widest">Evaluación del Estudiante</span>
                 <h2 class="text-3xl font-bold text-navy mt-2">Evaluaciones</h2>
                 <p class="text-slate-500">Registro de notas de prácticas, parciales y finales por asignatura.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="{{ route('evaluations.record') }}" class="px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Acta de Notas</a>
-                <a href="{{ route('evaluations.create') }}" class="px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">+ Registrar Evaluación</a>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('evaluations.record') }}" class="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-300 text-navy rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                    Acta de Notas
+                </a>
+                <a href="{{ route('evaluations.create') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-accent text-ink font-black rounded shadow-md text-sm hover:brightness-95 transition-all">
+                    <span class="material-symbols-outlined text-lg">fact_check</span>
+                    Registrar Evaluación
+                </a>
             </div>
         </div>
     </x-slot>
@@ -19,7 +25,7 @@
                 <div class="p-4">
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <select name="academic_period_id" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="academic_period_id" onchange="this.form.submit()" aria-label="Filtrar por periodo" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los periodos</option>
                                 @foreach($periods as $period)
                                     <option value="{{ $period->id }}" {{ request('academic_period_id') == $period->id ? 'selected' : '' }}>{{ $period->name }}</option>
@@ -27,7 +33,7 @@
                             </select>
                         </div>
                         <div>
-                            <select name="subject_id" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="subject_id" onchange="this.form.submit()" aria-label="Filtrar por asignatura" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todas las asignaturas</option>
                                 @foreach($subjects as $subject)
                                     <option value="{{ $subject->id }}" {{ request('subject_id') == $subject->id ? 'selected' : '' }}>{{ $subject->code }} - {{ $subject->name }}</option>
@@ -35,15 +41,21 @@
                             </select>
                         </div>
                         <div>
-                            <select name="student_id" class="w-full rounded-lg border-slate-200 text-sm">
+                            <select name="student_id" onchange="this.form.submit()" aria-label="Filtrar por estudiante" class="w-full rounded-lg border-slate-200 text-sm">
                                 <option value="">Todos los estudiantes</option>
                                 @foreach($students as $student)
                                     <option value="{{ $student->id }}" {{ request('student_id') == $student->id ? 'selected' : '' }}>{{ $student->codigo }} - {{ $student->fullName() }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <button type="submit" class="w-full px-4 py-2 bg-navy text-white rounded-lg text-sm font-semibold hover:bg-[#343d96] transition-colors">Filtrar</button>
+                        <div class="flex items-center gap-2">
+                            @if(count(request()->except(['page'])) > 0)
+                                <a href="{{ route('evaluations.index') }}" class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-500 hover:text-navy transition-colors" title="Quitar filtros">
+                                    <span class="material-symbols-outlined text-lg">filter_alt_off</span>
+                                    Limpiar
+                                </a>
+                            @endif
+                            <p class="text-xs text-slate-400">Los filtros se aplican automáticamente</p>
                         </div>
                     </form>
                 </div>
@@ -84,7 +96,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-slate-500">{{ $evaluation->evaluation_date?->format('d/m/Y') }}</td>
                                     <td class="px-6 py-4 text-right">
-                                        <a href="{{ route('evaluations.show', $evaluation) }}" class="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
+                                        <a href="{{ route('evaluations.show', $evaluation) }}" title="Ver detalle" aria-label="Ver detalle de la evaluación" class="inline-flex p-1.5 hover:bg-slate-100 rounded text-navy">
                                             <span class="material-symbols-outlined text-lg">visibility</span>
                                         </a>
                                     </td>

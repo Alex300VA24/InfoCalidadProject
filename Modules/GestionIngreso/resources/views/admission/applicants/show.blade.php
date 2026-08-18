@@ -44,7 +44,7 @@
                                     <p class="text-xs text-emerald-600">El estudiante ya fue habilitado con acceso al sistema.</p>
                                 </div>
                             </div>
-                            <a href="{{ route('admission.applicants.constancia', $applicant) }}" class="px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">Descargar PDF</a>
+                            <a data-turbo="false" href="{{ route('admission.applicants.constancia', $applicant) }}" class="px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-bold hover:bg-emerald-600 transition-colors">Descargar PDF</a>
                         </div>
                     @endif
                 </div>

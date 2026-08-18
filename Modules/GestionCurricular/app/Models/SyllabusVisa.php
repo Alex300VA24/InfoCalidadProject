@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SyllabusVisa extends Model
 {
+    protected $table = 'app_gestion_curricular.syllabus_visas';
+
     use HasFactory;
 
     protected $fillable = ['syllabus_id', 'visor_id', 'status', 'observations', 'visado_at'];

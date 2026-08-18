@@ -2,6 +2,7 @@
 
 namespace Modules\GestionCurricular\Http\Controllers\CurriculumReview;
 
+use Inertia\Inertia;
 use Modules\Core\Http\Controllers\Controller;
 use Modules\GestionCurricular\Http\Requests\StoreTechnicalReportRequest;
 use Modules\GestionCurricular\Models\CurriculumReview;
@@ -14,7 +15,9 @@ class TechnicalReportController extends Controller
     {
         $review->load(['checklistTemplate.criteria', 'evaluations.criterion', 'actionType', 'academicPeriod', 'career']);
 
-        return view('curriculum.reports.create', compact('review'));
+        return Inertia::render('Curriculum/Reports/Create', [
+            'review' => $review,
+        ]);
     }
 
     public function store(StoreTechnicalReportRequest $request, CurriculumReview $review)
@@ -32,16 +35,20 @@ class TechnicalReportController extends Controller
 
     public function show(TechnicalReport $report)
     {
-        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer']);
+        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer', 'approval']);
 
-        return view('curriculum.reports.show', compact('report'));
+        return Inertia::render('Curriculum/Reports/Show', [
+            'report' => $report,
+        ]);
     }
 
     public function edit(TechnicalReport $report)
     {
         $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType']);
 
-        return view('curriculum.reports.edit', compact('report'));
+        return Inertia::render('Curriculum/Reports/Edit', [
+            'report' => $report,
+        ]);
     }
 
     public function update(Request $request, TechnicalReport $report)
@@ -64,7 +71,7 @@ class TechnicalReportController extends Controller
 
     public function pdf(TechnicalReport $report)
     {
-        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer']);
+        $report->load(['curriculumReview.checklistTemplate.criteria', 'curriculumReview.evaluations.criterion', 'curriculumReview.actionType', 'curriculumReview.academicPeriod', 'curriculumReview.career', 'preparer', 'approval.approver']);
 
         $pdf = app('dompdf.wrapper')->loadView('curriculum.reports.pdf', compact('report'));
 

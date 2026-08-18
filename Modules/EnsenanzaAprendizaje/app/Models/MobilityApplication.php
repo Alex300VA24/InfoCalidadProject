@@ -10,6 +10,8 @@ use Modules\Core\Models\Student;
 
 class MobilityApplication extends Model
 {
+    protected $table = 'app_ensenanza_aprendizaje.mobility_applications';
+
     use HasFactory;
 
     public const TYPES = [
@@ -65,5 +67,15 @@ class MobilityApplication extends Model
     public function statusLabel(): string
     {
         return self::STATUSES[$this->status] ?? $this->status;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->typeLabel();
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->statusLabel();
     }
 }
